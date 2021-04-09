@@ -2,7 +2,7 @@
 
 imuWidget::imuWidget(QWidget *parent) : QGLWidget(parent)
 {
-    car = new ObjParser("/home/yh/DIVA_QT/obj/Car.obj");
+    car = new ObjParser("/home/yh/git/DIVA2_QT/obj/Car.obj");
 }
 
 void imuWidget::initializeGL(){
@@ -34,7 +34,6 @@ void imuWidget::paintGL(){
         //glRotatef(yaw, 0.0, 0.0, 1.0);
 
         draw_obj(car);
-
 }
 
 void imuWidget::resizeGL(int w, int h){
@@ -148,6 +147,6 @@ void imuWidget::draw_line(double roll, double pitch, double yaw)
     glPopMatrix();
 
     glPopMatrix();
-    swapBuffers();
+    //swapBuffers();
     //glFlush();
 }

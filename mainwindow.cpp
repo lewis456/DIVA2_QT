@@ -84,7 +84,7 @@ void MainWindow::display_gps_info(QString latitude, QString longitude){
                     mpage->runJavaScript(QString("getAddr();"),[this](const QVariant &v){
                         addr = v.toString();
                         gpsWidget->setText(addr);
-                    })
+                    });
             } 
         }
         gpsWidget2->show();
