@@ -1,4 +1,5 @@
 #include "gpsthread.h"
+#include "gps_packet.h"
 #include <zmq.hpp>
 struct termios stOldState;
 struct termios stNewState;
@@ -24,15 +25,15 @@ void gpsThread::run() {
     gps_sub.setsockopt(ZMQ_SUBSCRIBE, "GPS", 3);
 
     std::cout << "GPS streaming_start" << std::endl;
-
+    GpsPacket gp;
     while (!stop_flag) {
         string topic = s_recv(gps_sub);
-        latitude= s_recv(gps_sub);
-        longitude = s_recv(gps_sub);
-        cout<<latitude<<" "<<longitude<<endl;
+        zmq::message_t msg;
+        gps_sub.recv(&msg);
+        gp=*(GpsPacket*)msg.data();
         emit send_ll(
-            QString::fromLocal8Bit(latitude.c_str()),
-            QString::fromLocal8Bit(longitude.c_str())
+            QString::number(Convert_to_dd(gp.Latitude)),
+            QString::number(Convert_to_dd(gp.Longitude))
         );
     }
 }
@@ -40,17 +41,15 @@ void gpsThread::run() {
 void gpsThread::stop(){
     stop_flag = true;
     emit send_end();
-    writeFile.close();
-    cs.close_serial(iDev);
 }
 
-void gpsThread::get_dir(QString dir_str){
-    dir = dir_str.toStdString();
-}
+// void gpsThread::get_dir(QString dir_str){
+//     dir = dir_str.toStdString();
+// }
 
-long double gpsThread::Convert_to_dd(long double raw){
+double gpsThread::Convert_to_dd(double raw){
     int dd = static_cast<int>(raw/100);
-    long double ddddd = raw - static_cast<long double>(dd*100)/60;
+    double ddddd = (raw - static_cast<double>(dd*100))/60;
 
-    return dd+ddddd;
+    return static_cast<double>(dd+ddddd);
 }

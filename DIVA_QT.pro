@@ -50,6 +50,7 @@ HEADERS += \
     canthread.h \
     displaythread.h \
     glwidget.h \
+    gps_packet.h \
     gpsthread.h \
     imuthread.h \
     imuwidget.h \

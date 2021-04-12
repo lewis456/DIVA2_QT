@@ -26,30 +26,11 @@ class gpsThread : public QThread
 public:
     explicit gpsThread(QObject *parent = 0);
 
-    Timestamp ts;
-    Strtok_m stm;
-    Can_serial cs;
-
-    int iDev;
-    int iRet;
-
-    string latitude;
-    string longitude;
-
-   
-
-    char cBuff[526];
-
-    const char * mtime;
-    string dir;
-    string path;
-    ofstream writeFile;
-    QTimer timer;
     bool stop_flag = false;
-    long double Convert_to_dd(long double raw);
+    double Convert_to_dd(double raw);
 
 public slots:
-    void get_dir(QString);
+    //void get_dir(QString);
     void stop();
 
 private:
