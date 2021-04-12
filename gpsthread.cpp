@@ -15,7 +15,6 @@ inline static std::string s_recv(zmq::socket_t & socket, int flags = 0) {
 
 gpsThread::gpsThread(QObject *parent) : QThread(parent)
 {
-    
 }
 
 void gpsThread::run() {

@@ -12,14 +12,6 @@
 #include <iostream>
 #include <zmq.hpp>
 
-#include "Timestamp.h"
-#include "Strtok_m.h"
-#include "Can_serial.h"
-
-#define GPSDEVICE "/dev/ttyACM0"
-#define BAUDRATE B9600
-
-
 class gpsThread : public QThread
 {
      Q_OBJECT

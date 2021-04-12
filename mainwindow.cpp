@@ -246,7 +246,6 @@ void MainWindow::Make(){
 
 
 void MainWindow::Initializing_for_Live(){
-
     this->Make();
 
     // diva = new QLabel(this);
