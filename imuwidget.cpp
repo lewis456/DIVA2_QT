@@ -24,10 +24,10 @@ void imuWidget::paintGL(){
         glRotatef(45, 0.0, 0.0, 1.0);
 
         double roll = 180 * atan(accel_x / sqrt(accel_y * accel_y + accel_z * accel_z)) / M_PI;
-        double yaw = 180 * atan(accel_z / sqrt(accel_x * accel_x + accel_z * accel_z)) / M_PI;
+        //double yaw = 180 * atan(accel_z / sqrt(accel_x * accel_x + accel_z * accel_z)) / M_PI;
         double pitch =   180 * atan(accel_y / sqrt(accel_x * accel_x + accel_z * accel_z)) / M_PI;
 
-        draw_line(roll, pitch, yaw);
+        draw_line(roll, pitch);
 
         glRotatef(float(roll), 1.0, 0.0, 0.0);
         glRotatef(float(pitch), 0.0, 1.0, 0.0);
@@ -94,11 +94,10 @@ void imuWidget::draw_obj(ObjParser *objParser) {
 
 void imuWidget::drawBitmapText(const char *str, float x, float y, float z)
 {
-    glRasterPos3f(x, y, z); //문자열이 그려질 위치 지정
+    glRasterPos3f(x, y, z);
 
     while (*str)
     {
-        //GLUT_BITMAP_TIMES_ROMAN_24 폰트를 사용하여 문자열을 그린다.
         glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, *str);
 
         str++;
@@ -107,15 +106,15 @@ void imuWidget::drawBitmapText(const char *str, float x, float y, float z)
 
 
 
-void imuWidget::draw_line(double roll, double pitch, double yaw)
+void imuWidget::draw_line(double roll, double pitch)
 {
     char *xroll = new char[256];
     char *ypitch = new char[256];
-    char *zyaw = new char[256];
+    //char *zyaw = new char[256];
 
     sprintf(xroll, "R_%f", roll);
     sprintf(ypitch, "P_%f", pitch);
-    sprintf(zyaw, "Y_%f", yaw);
+    //sprintf(zyaw, "Y_%f", yaw);
 
     glPushMatrix();
 
@@ -125,7 +124,7 @@ void imuWidget::draw_line(double roll, double pitch, double yaw)
             glVertex3f(5.0, 0.0, 0.0);
             glVertex3f(-5.0, 0.0, 0.0);
         glEnd();
-        drawBitmapText(xroll, -2.0, 0.0, 0.0);
+        drawBitmapText(xroll, 2.0, 0.0, 0.0);
     glPopMatrix();
 
     glPushMatrix();
@@ -143,7 +142,7 @@ void imuWidget::draw_line(double roll, double pitch, double yaw)
             glVertex3f(0.0, 0.0, 5.0);
             glVertex3f(0.0, 0.0, -5.0);
         glEnd();
-        drawBitmapText(zyaw, 0.0, -0.1, 1.0);
+        //drawBitmapText(zyaw, 0.0, -0.1, 1.0);
     glPopMatrix();
 
     glPopMatrix();

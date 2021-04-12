@@ -8,6 +8,7 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    this->setFixedSize(1776,900);
     storage=QStorageInfo::root();
     ui->progressBar->setRange(0,100);
 //    ui->progressBar->setValue(50);
@@ -105,8 +106,9 @@ void MainWindow::gps_view_initialize(){
 }
 
 void MainWindow::display_cam(QImage image){
-    camWidget->setPixmap(QPixmap::fromImage(image).scaled(camWidget->width(),camWidget->height(), Qt::KeepAspectRatio));
-    camWidget->show();  
+    camWidget->setPixmap(QPixmap::fromImage(image).scaled(camWidget->width(),camWidget->height()-10, Qt::KeepAspectRatio));
+    camWidget->setAlignment(Qt::AlignCenter);
+    camWidget->show();
     QCoreApplication::processEvents();
 }
 
@@ -157,7 +159,8 @@ void MainWindow::Make(){
     ui->progressBar->setMaximum(100);
     
     lvw = new lidarVTKWidget(this);
-    camWidget = new QLabel(this);
+    //camWidget = new QLabel(this);
+    camWidget=ui->Cam;
     gpsWidget = new QLabel(this);
     iw = new imuWidget();
     
@@ -192,22 +195,22 @@ void MainWindow::Make(){
 
     mpage = new QWebEnginePage(this);
     mview = new QWebEngineView(this);
-    mview->setGeometry(490, 30, 550, 860);
-    //mview->setStyleSheet("background-color: rgba(255, 255, 255, 80);");
+    mview->setGeometry(650, 30, 570, 860);
+    mview->setStyleSheet("background-color: rgba(255, 255, 255, 80);");
     mpage->setUrl(QUrl("http://localhost:8080/map_display2.html"));
     mpage->setView(mview);
 
     gpsWidget2 = new QLabel(this);
-    gpsWidget->setGeometry(490, 815, 540, 35);
+    gpsWidget->setGeometry(650, 815, 560, 35);
     gpsWidget->setStyleSheet("background-color: rgba(255, 255, 255, 80);");
     gpsWidget->setAlignment(Qt::AlignCenter);
     gpsWidget->raise();
-    gpsWidget2->setGeometry(490, 855, 540, 35);
+    gpsWidget2->setGeometry(650, 855, 560, 35);
     gpsWidget2->setStyleSheet("background-color: rgba(255, 255, 255, 80);");
     gpsWidget2->setAlignment(Qt::AlignCenter);
     gpsWidget2->raise();
-    camWidget->setGeometry(20, 60, 450,500);
-    camWidget->setStyleSheet("background-color: rgba(255, 255, 255, 80);");
+    //camWidget->setGeometry(20, 30, 520,480);
+    //camWidget->setStyleSheet("background-color: rgba(255, 255, 255, 80);");
 
     ui->gridLayout_3->layout()->addWidget(iw);
 

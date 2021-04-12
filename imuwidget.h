@@ -36,7 +36,7 @@ class imuWidget : public QGLWidget
 
        void draw_obj(ObjParser *objParser);
        void drawBitmapText(const char *str, float x, float y, float z);
-       void draw_line(double roll, double pitch, double yaw);
+       void draw_line(double roll, double pitch);
 
        QTimer timer;
        ObjParser *car;

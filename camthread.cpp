@@ -15,15 +15,6 @@ camThread::camThread(QObject *parent) : QThread(parent)
 
 void camThread::run(){
     std::cout<<"CAM Streaming_start"<<std::endl;
-
-    // path = dir+"/CAM/i30_CAM_ts_"+ts.getMilliTime()+".txt";
-    // writeFile.open(path.c_str());
-    // std::cout<<"The CAM_ts.txt file saved to ["<<path<<"]\n";
-    // cap.open(2);
-    // cap.read(frame);
-    // cap.set(cv::CAP_PROP_FRAME_WIDTH, 4000);
-    // cap.set(cv::CAP_PROP_FRAME_HEIGHT, 4000);
-    // cap.read(frame);
     zmq::context_t ctx(1);
      zmq::socket_t cam_sub( ctx, ZMQ_SUB);
     cam_sub.connect("tcp://127.0.0.1:5563");
@@ -32,15 +23,6 @@ void camThread::run(){
           QThread::msleep(10);
 
     while(!stop_flag){
-        //cap >> frame;
-
-        // string m_time = ts.getMilliTime();
-        // const char * now_time = ts.p_time();
-        // //sprintf(buf,"/home/kanakim/Documents/CAM/JPG/i30_CAM_%s.jpg", now_time);
-        // string save_path = dir+"/CAM/JPG/i30_CAM_"+m_time+".jpg";
-        // string tmp = "\n";
-
-        // cvtColor(frame, mat,cv::COLOR_BGR2RGB);
         int cnt = 0;
         string topic=s_recv(cam_sub);
             int rows, cols, type;
@@ -57,26 +39,10 @@ void camThread::run(){
             type = *(int*)rcv_msg.data();
             cam_sub.recv(&rcv_msg, 0); // data
             data = (void*)rcv_msg.data();
-            //std::cout << "rows=" << rows << ", cols=" << cols << ", type=" << type << std::endl;
 
-            if (type == 2) {
-                img = cv::Mat(rows, cols, CV_8UC1, data);
-            }
-            else {
-                img = cv::Mat(rows, cols, CV_8UC3, data);
-            }
-        QImage image(img.size().width, img.size().height, QImage::Format_RGB888);
-        memcpy(image.scanLine(0), img.data, static_cast<size_t>(image.width() * image.height() * 3));
+        QImage image(cols, rows, QImage::Format_RGB888);
+        memcpy(image.scanLine(0), data, static_cast<size_t>(cols*rows*3));
         emit send_qimage(image);
-
-        // if(writeFile.is_open()){
-        //     writeFile << m_time << "\n";
-        // }
-        // imwrite(save_path.c_str(), frame, Compression_params);
-        //imwrite(save_path.c_str(), frame);
-        
-        //QThread::msleep(10);
-        //QCoreApplication::processEvents();
     }
 }
 

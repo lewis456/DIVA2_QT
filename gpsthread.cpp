@@ -34,9 +34,7 @@ void gpsThread::run() {
             QString::fromLocal8Bit(latitude.c_str()),
             QString::fromLocal8Bit(longitude.c_str())
         );
-       // QThread::msleep(1000);
     }
-    //QCoreApplication::processEvents();
 }
 
 void gpsThread::stop(){
@@ -51,9 +49,8 @@ void gpsThread::get_dir(QString dir_str){
 }
 
 long double gpsThread::Convert_to_dd(long double raw){
-    int dd = (int)(raw/100);
-    long double ddddd = raw - (long double)(dd*100);
-    ddddd /= 60;
+    int dd = static_cast<int>(raw/100);
+    long double ddddd = raw - static_cast<long double>(dd*100)/60;
 
-    return (long double)dd+ddddd;
+    return dd+ddddd;
 }
