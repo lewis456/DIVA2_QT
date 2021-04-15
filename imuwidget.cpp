@@ -6,9 +6,11 @@ imuWidget::imuWidget(QWidget *parent) : QGLWidget(parent)
 }
 
 void imuWidget::initializeGL(){
-        glClearColor(0.0, 0.0, 0.0, 0.0);
+        glClearColor(0,0,0,1);
         glClearDepth(1.0);
         glEnable(GL_DEPTH_TEST);
+        //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        //glEnable(GL_BLEND);
 }
 
 void imuWidget::paintGL(){
@@ -23,9 +25,9 @@ void imuWidget::paintGL(){
         glRotatef(0, 0.0, 1.0, 0.0);
         glRotatef(45, 0.0, 0.0, 1.0);
 
-        double roll = 180 * atan(accel_x / sqrt(accel_y * accel_y + accel_z * accel_z)) / M_PI;
+        double pitch = 180 * atan(accel_x / sqrt(accel_y * accel_y + accel_z * accel_z)) / M_PI;
         //double yaw = 180 * atan(accel_z / sqrt(accel_x * accel_x + accel_z * accel_z)) / M_PI;
-        double pitch =   180 * atan(accel_y / sqrt(accel_x * accel_x + accel_z * accel_z)) / M_PI;
+        double roll =   180 * atan(accel_y / sqrt(accel_x * accel_x + accel_z * accel_z)) / M_PI;
 
         draw_line(roll, pitch);
 
@@ -119,16 +121,16 @@ void imuWidget::draw_line(double roll, double pitch)
     glPushMatrix();
 
     glPushMatrix();
-        glColor3f(0.313, 0.737, 0.929);
+        glColor4f(0.313, 0.737, 0.929, 1.0);
         glBegin(GL_LINES);
             glVertex3f(5.0, 0.0, 0.0);
             glVertex3f(-5.0, 0.0, 0.0);
         glEnd();
-        drawBitmapText(xroll, 2.0, 0.0, 0.0);
+        drawBitmapText(xroll, -1.3, 0.0, -1.0);
     glPopMatrix();
 
     glPushMatrix();
-        glColor3f(0.313, 0.929, 0.615);
+        glColor4f(0.313, 0.929, 0.615,1.0);
         glBegin(GL_LINES);
             glVertex3f(0.0, 5.0, 0.0);
             glVertex3f(0.0, -5.0, 0.0);
@@ -137,7 +139,7 @@ void imuWidget::draw_line(double roll, double pitch)
     glPopMatrix();
 
     glPushMatrix();
-        glColor3f(0.823, 0.929, 0.313);
+        glColor4f(0.823, 0.929, 0.313,1.0);
         glBegin(GL_LINES);
             glVertex3f(0.0, 0.0, 5.0);
             glVertex3f(0.0, 0.0, -5.0);
@@ -146,6 +148,7 @@ void imuWidget::draw_line(double roll, double pitch)
     glPopMatrix();
 
     glPopMatrix();
+    glFlush();
     //swapBuffers();
     //glFlush();
 }

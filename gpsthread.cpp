@@ -1,8 +1,8 @@
 #include "gpsthread.h"
 #include "gps_packet.h"
 #include <zmq.hpp>
-struct termios stOldState;
-struct termios stNewState;
+// struct termios stOldState;
+// struct termios stNewState;
 
 using namespace std;
 

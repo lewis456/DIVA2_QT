@@ -17,21 +17,17 @@
 class ImuPacket {
 public:
     ImuPacket();
+    //time_t time;
     float scaledAccelX, scaledAccelY, scaledAccelZ;
     float scaledGyroX, scaledGyroY, scaledGyroZ;
     float scaledMagX, scaledMagY, scaledMagZ;
     float estRoll, estPitch, estYaw;
     float estRollUncert, estPitchUncert, estYawUncert;
-
+    float get_x();
+    float get_y();
+    float get_z();
 };
 
-// ImuPacket::ImuPacket(){
-//     scaledAccelX=0;  scaledAccelY=0; scaledAccelZ=0;
-//     scaledGyroX=0; scaledGyroY=0; scaledGyroZ=0;
-//     scaledMagX=0; scaledMagY=0; scaledMagZ=0;
-//     estRoll=0; estPitch=0; estYaw=0;
-//     estRollUncert=NULL; estPitchUncert=NULL; estYawUncert=NULL;
-// }
 
 class imuThread : public QThread
 {
