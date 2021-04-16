@@ -27,7 +27,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 find_package(Qt5 REQUIRED Widgets Gui)
 ADD_DEFINITIONS (${QT_DEFINITIONS})
 find_package(Qt5 REQUIRED COMPONENTS Core Gui Sql X11Extras OpenGL Network PrintSupport WebEngineWidgets SerialPort SerialBus)
-
+find_package(Protobuf REQUIRED)
 
 find_package(Threads)
 find_package(Eigen3 REQUIRED)
@@ -51,6 +51,11 @@ link_directories(${PCL_LIBRARY_DIRS})
 add_definitions(${PCL_DEFINITIONS})
 pkg_check_modules(JSONCPP jsoncpp)
 link_libraries(${JSONCPP_LIBRARIES})
+
+#protobuf
+find_package(Protobuf REQUIRED)
+include_directories(${PROTOBUF_INCLUDE_DIRS})
+PROTOBUF_GENERATE_CPP(PROTO_SRCS PROTO_HDRS sensors.proto)
 
 # Load additional vtk components; prefer newer vtk opengl module
 set(VIZ_VTK_COMPONENTS vtkCommonCore vtkCommonDataModel vtkCommonMath
@@ -105,10 +110,10 @@ set(project_SOURCES main.cpp  canthread.cpp imuwidget.cpp  mainwindow.cpp camthr
   lidarthread.cpp lidarvtkwidget.cpp  imuthread.cpp qcgaugewidget.cpp storingdb.cpp makejson.cpp 
   readfiles.cpp indexandtimes.cpp)
 #
-add_executable(${PROJECT_NAME} ${project_SOURCES} ${MSCL_INC_PATH} ${MSCL_LIB} ${MSCL_INC})
+add_executable(${PROJECT_NAME} ${project_SOURCES} ${MSCL_INC_PATH} ${MSCL_LIB} ${MSCL_INC} ${PROTO_SRCS} ${PROTO_HDRS})
 
 target_link_libraries(${PROJECT_NAME} ${PCL_LIBRARIES} ${VTK_LIBRARIES} ${JSONCPP_LIBRARIES} ${OpenCV_LIBS} ${GTK2_LIBRARIES}
-${OPENGL_LIBRARIES} ${GLUT_LIBRARY} ${CMAKE_THREAD_LIBS_INIT} 
+${OPENGL_LIBRARIES} ${GLUT_LIBRARY} ${CMAKE_THREAD_LIBS_INIT} ${PROTOBUF_LIBRARIES} 
 	Qt5::Core
         Qt5::Gui
         Qt5::Widgets

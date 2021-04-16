@@ -11,9 +11,13 @@
 #include <QCoreApplication>
 #include <string>
 #include <iostream>
+#include <google/protobuf/
 
 #include "mscl/mscl.h"
 #include "Timestamp.h"
+#include <google/protobuf/text_format.h>
+#include "sensors.pb.h"
+
 class ImuPacket {
 public:
     ImuPacket();

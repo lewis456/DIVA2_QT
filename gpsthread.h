@@ -11,6 +11,8 @@
 #include <string>
 #include <iostream>
 #include <zmq.hpp>
+#include <google/protobuf/text_format.h>
+#include "sensors.pb.h"
 
 class gpsThread : public QThread
 {
@@ -20,6 +22,8 @@ public:
 
     bool stop_flag = false;
     double Convert_to_dd(double raw);
+
+    double latitude=0, longitude=0;
 
 public slots:
     //void get_dir(QString);

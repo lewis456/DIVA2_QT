@@ -1,5 +1,4 @@
 #include "gpsthread.h"
-#include "gps_packet.h"
 #include <zmq.hpp>
 // struct termios stOldState;
 // struct termios stNewState;
@@ -27,12 +26,19 @@ void gpsThread::run() {
     GpsPacket gp;
     while (!stop_flag) {
         string topic = s_recv(gps_sub);
+        sensors::Gps gps;
         zmq::message_t msg;
         gps_sub.recv(&msg);
-        gp=*(GpsPacket*)msg.data();
+
+        //protobuf parsing
+        string msg_str(static_cast<char*>(msg.data()), msg.size());
+        gps.ParseFromString(msg_str);
+        latitude = gps.latitude();
+        longitude = gps.longitude();
+
         emit send_ll(
-            QString::number(Convert_to_dd(gp.Latitude)),
-            QString::number(Convert_to_dd(gp.Longitude))
+            QString::number(Convert_to_dd(latitude)),
+            QString::number(Convert_to_dd(longitude))
         );
     }
 }

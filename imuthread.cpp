@@ -23,19 +23,18 @@ void imuThread::run() {
     cout<<"imu run"<<endl;
     while(!stop_flag) {
         string topic=s_recv(imu_sub);
-        cout<<"recived data"<<endl;
+        sensors::Imu imu;
         zmq::message_t msg;
         imu_sub.recv(&msg);
-        ImuPacket imupacket=*(ImuPacket*)msg.data();
-        // accel_x=imupacket.scaledAccelX;
-        // accel_y=imupacket.scaledAccelY;
-        // accel_y=imupacket.scaledAccelZ;
-        accel_x=imupacket.get_x();
-        accel_y=imupacket.get_y();
-        accel_z=imupacket.get_z();
+
+        //protobuf parsing
+        string msg_str(static_cast<char*>(msg.data()), msg.size());
+        imu.ParseFromString(msg_str);
+        accel_x=imu.scaledaccelx();
+        accel_y=imu.scaledaccely()
+        accel_z=imu.scaledaccelz();
+        
         emit send_acc(accel_x, accel_y, accel_z);
-        printf("Accel (X,Y,Z) = (%.2f, %.2f, %.2f)\n",accel_x, accel_y, accel_z );
-        //QThread::msleep(40);
     }
 }
 
