@@ -13,7 +13,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->progressBar->setRange(0,100);
 //    ui->progressBar->setValue(50);
     timer=new QTimer(this);
-    timer->setInterval(100);
+    timer->setInterval(1000);
     connect(timer, SIGNAL(timeout()), this, SLOT(setUsage()));
     //QThread::msleep(1000);
     qRegisterMetaType<pcl::PointCloud<pcl::PointXYZ>::Ptr >("pcl::PointCloud<pcl::PointXYZ>::Ptr");
@@ -72,7 +72,7 @@ void MainWindow::on_can_cb_stateChanged(int arg1){
 }
 
 
-void MainWindow::display_gps_info(QString latitude, QString longitude){
+void MainWindow::display_gps_info(QString latitude, QString longitude,double hdop){
     //mpage->setView(mview);
     string latlong = " lat : "+latitude.toStdString()+" lng : "+longitude.toStdString();
 
@@ -94,6 +94,35 @@ void MainWindow::display_gps_info(QString latitude, QString longitude){
     }
     mview->show();
     gpscnt++;
+    if(gpscnt%10==0){
+   if(hdop<=1){
+       ui->signal1->setStyleSheet("QLabel { background-color: rgb(115, 210, 22); "
+                                            "border-radius: 5px;}");
+       ui->signal2->setStyleSheet("QLabel { background-color: rgb(115, 210, 22); "
+                                            "border-radius: 5px;}");
+       ui->signal3->setStyleSheet("QLabel { background-color: rgb(115, 210, 22); "
+                                            "border-radius: 5px;}");
+   }
+   else if(hdop<=5){
+       ui->signal1->setStyleSheet("QLabel { background-color: rgb(237, 212, 0); "
+                                            "border-radius: 5px;}");
+       ui->signal2->setStyleSheet("QLabel { background-color: rgb(237, 212, 0); "
+                                            "border-radius: 5px;}");
+       ui->signal3->setStyleSheet("QLabel { background-color: rgb(255, 255, 255); "
+                                            "border-radius: 5px;}");
+   }
+   else{
+       ui->signal1->setStyleSheet("QLabel { background-color: rgb(204, 0, 0); "
+                                            "border-radius: 5px;}");
+       ui->signal2->setStyleSheet("QLabel { background-color: rgb(255, 255, 255); "
+                                            "border-radius: 5px;}");
+       ui->signal3->setStyleSheet("QLabel { background-color: rgb(255, 255, 255); "
+                                            "border-radius: 5px;}");
+   }
+   ui->signal1->show();
+   ui->signal2->show();
+   ui->signal3->show();
+    }
 }
 
 void MainWindow::gps_view_initialize(){
@@ -157,17 +186,17 @@ void MainWindow::display_turn_indicator(int turn){
 void MainWindow::Make(){
 
     ui->progressBar->setMaximum(100);
-    
     lvw = new lidarVTKWidget(this);
-    //camWidget = new QLabel(this);
     camWidget=ui->Cam;
     gpsWidget = new QLabel(this);
+    gpsWidget2 = new QLabel(this);
+    mpage = new QWebEnginePage(this);
+    mview = new QWebEngineView(this);
     iw = new imuWidget();
+    mSpeedGauge = new QcGaugeWidget;
     
-    
-    
-    QPixmap lpix("/home/yh/DIVA_QT/resource/leftarrowbefore.png");
-    QPixmap rpix("/home/yh/DIVA_QT/resource/rightarrowbefore.png");
+    QPixmap lpix("/home/yh/DIVA2_QT/resource/leftarrowbefore.png");
+    QPixmap rpix("/home/yh/DIVA2_QT/resource/rightarrowbefore.png");
     ui->label->setPixmap(rpix);
     ui->label_2->setPixmap(lpix);
     
@@ -180,8 +209,8 @@ void MainWindow::Make(){
 //    redRectLabel->show();
 
 
-    QPixmap lArrowPixm("/home/yh/DIVA_QT/resource/leftarrow.png");
-    QPixmap rArrowPixm("/home/yh/DIVA_QT/resource/rightarrow.png");
+    QPixmap lArrowPixm("/home/yh/DIVA2_QT/resource/leftarrow.png");
+    QPixmap rArrowPixm("/home/yh/DIVA2_QT/resource/rightarrow.png");
     lArrowLabel  = new QLabel(this); lArrowLabel->setStyleSheet("QLabel { background-color: rgba(255, 255, 255, 0); }");
     rArrowLabel = new QLabel(this); rArrowLabel->setStyleSheet("QLabel { background-color: rgba(255, 255, 255, 0); }");
     lArrowLabel->setPixmap(lArrowPixm);
@@ -190,31 +219,30 @@ void MainWindow::Make(){
     rArrowLabel->setGeometry(170,360,80,80);
     lArrowLabel->hide(); rArrowLabel->hide();
 
+    //lidar widget
     ui->gridLayout_2->layout()->addWidget(lvw);
-    lvw->setGeometry(300, 40,1280, 780);
-
-    mpage = new QWebEnginePage(this);
-    mview = new QWebEngineView(this);
-    mview->setGeometry(650, 30, 570, 860);
-    mview->setStyleSheet("background-color: rgba(255, 255, 255, 80);");
+ 
+    //kakao map
+    mview->setGeometry(650, 30, 580, 810);
+    //mview->setAttribute(Qt::WA_TranslucentBackground);
+    mview->setStyleSheet("background:transparent;");
     mpage->setUrl(QUrl("http://localhost:8080/map_display2.html"));
+    mpage->setBackgroundColor(Qt::transparent);
     mpage->setView(mview);
 
-    gpsWidget2 = new QLabel(this);
-    gpsWidget->setGeometry(650, 815, 560, 35);
+    gpsWidget->setGeometry(650, 815, 570, 40);
     gpsWidget->setStyleSheet("background-color: rgba(255, 255, 255, 80);");
     gpsWidget->setAlignment(Qt::AlignCenter);
     gpsWidget->raise();
-    gpsWidget2->setGeometry(650, 855, 560, 35);
+    gpsWidget2->setGeometry(650, 855, 570, 40);
     gpsWidget2->setStyleSheet("background-color: rgba(255, 255, 255, 80);");
     gpsWidget2->setAlignment(Qt::AlignCenter);
     gpsWidget2->raise();
-    //camWidget->setGeometry(20, 30, 520,480);
-    //camWidget->setStyleSheet("background-color: rgba(255, 255, 255, 80);");
 
+    //imu widget
     ui->gridLayout_3->layout()->addWidget(iw);
 
-    mSpeedGauge = new QcGaugeWidget;
+    //can widget
     mSpeedGauge->addBackground(99);
     QcBackgroundItem *bkg1 = mSpeedGauge->addBackground(92);
     bkg1->clearrColors();
@@ -239,7 +267,14 @@ void MainWindow::Make(){
     mSpeedGauge->addGlass(88);
     ui->gridLayout->layout()->addWidget(mSpeedGauge);
 
-    //setTotal();
+    ui->signal1->show();
+    ui->signal2->show();
+    ui->signal3->show();
+
+    ui->signal1->raise();
+    ui->signal2->raise();
+    ui->signal3->raise();
+    //storage
     setUsage();
 
 }
@@ -247,15 +282,6 @@ void MainWindow::Make(){
 
 void MainWindow::Initializing_for_Live(){
     this->Make();
-
-    // diva = new QLabel(this);
-    // diva->setGeometry(15, 622, 274,262);
-    // diva->setStyleSheet("background-color: rgb(255, 255, 255);");
-    // diva->setAlignment(Qt::AlignCenter);
-    // QPixmap temp_jpeg; 
-    // temp_jpeg.load("/home/yh/DIVA_QT/resource/diva_logo.jpg");
-    // diva->setPixmap(temp_jpeg.scaled(diva->width(), diva->height(),Qt::KeepAspectRatio));
-    // diva->show();
     mview->show();
     if(use_gps)
         gt = new gpsThread(this);
@@ -291,7 +317,7 @@ void MainWindow::Initializing_for_Live(){
 
     if(use_gps){
         connect(ui->actionLive_Streaming, SIGNAL(triggered()), gt, SLOT(start()));
-        connect(gt, SIGNAL(send_ll(QString, QString)), this, SLOT(display_gps_info(QString, QString))); 
+        connect(gt, SIGNAL(send_ll(QString, QString, double)), this, SLOT(display_gps_info(QString, QString, double))); 
         connect(ui->actionStreaming_End, SIGNAL(triggered()), gt, SLOT(stop()));
         connect(gt, SIGNAL(send_end()), this, SLOT(gps_view_initialize()));
     }
@@ -504,6 +530,32 @@ int idx_for_cnt_frames;
 int *saved_idx_for_cnt_frames;
 QString *saved_token_for_cnt_frames;
 void MainWindow::on_pushButton_clicked(){
+    std::cout<<"pushbutton\n";
+//    zmq::context_t ctx(1);
+//    zmq::socket_t req(ctx, ZMQ_REQ);
+//    req.connect("tcp://127.0.0.1:5556");
+//    string req_scene="hi";
+//    zmq::message_t msg(req_scene.size());
+//    memcpy(msg.data(), req_scene.data(), req_scene.size());
+//    req.send(msg);
+
+//    zmq::message_t scene_msg;
+//    req.recv(&scene_msg);
+//    string scene_s(static_cast<char*>(scene_msg.data()), scene_msg.size());
+
+//    string str_arr[100];
+//    int tok_cnt=0;
+//    char str_buff[100];
+//    strcpy(str_buff, scene_s.c_str());
+//    char *tok=strtok(str_buff, ",");
+
+//    while(tok!=nullptr){
+//        str_arr[tok_cnt++]=string(tok);
+//        tok=strtok(nullptr, ",");
+//        ui->listWidget->addItem(tok);
+//    }
+    char* tmp="hi";
+    ui->listWidget->addItem(QString(tmp));
     // cout<<"on_push_start"<<endl;
     // if(this_is_get_log){
     //     //int log_row = ui->label_4->currentRow();
@@ -624,7 +676,8 @@ void MainWindow::Display_Gps_Data(QString Text){
     idx_lat = this->gps_from_db->value(1).toString();
     idx_lng =this->gps_from_db->value(2).toString();
 
-    this->display_gps_info(idx_lat, idx_lng);
+    double tmp=0;
+    this->display_gps_info(idx_lat, idx_lng, tmp);
     QCoreApplication::processEvents();
     cout<<"display gps data end"<<endl;
 }
@@ -734,9 +787,7 @@ void MainWindow::setUsage(){
     QString s_free="Free: "+QString::number(free)+" GB";
     ui->usage->setText(s_free);
     used=total-free;
-    cout<<used<<endl;
     percent=static_cast<int>((used/total)*100);
-    cout<<percent<<endl;
     //ui->progressBar->setRange(0,100);
     ui->progressBar->setValue(percent);
 }
@@ -747,9 +798,9 @@ void MainWindow::display_imu_xyz(float x, float y, float z){
     QString zs=QString::number(z);
     QString str;
     xs.prepend("Acceleration\nX: ");
-    ys.prepend("  /  Y: ");
-    zs.prepend("  /  Z: ");
-    str=xs+ys+zs;
+    ys.prepend("G  /  Y: ");
+    zs.prepend("G  /  Z: ");
+    str=xs+ys+zs+"G";
     ui->label_8->setText(str);
     QCoreApplication::processEvents();
 }

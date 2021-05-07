@@ -6,48 +6,55 @@ lidarThread::lidarThread(QObject* parent) : QThread(parent)
 }
 
 void lidarThread::run(){
-    path = dir+"/LiDAR/i30_LiDAR_ts_" + ts.getMilliTime() + ".txt";
-    writeFile.open(path.c_str());
+    // path = dir+"/LiDAR/i30_LiDAR_ts_" + ts.getMilliTime() + ".txt";
+    // writeFile.open(path.c_str());
 
-    std::shared_ptr<OS1::client> cli;
-    if (do_config) {
-        std::cout << "Configuring sensor: " << os1_host
-                  << " UDP Destination:" << os1_udp_dest << std::endl;
-        cli = ouster::OS1::init_client(os1_host, os1_udp_dest, mode,
-              ouster::OS1::TIME_FROM_INTERNAL_OSC, lidar_port, imu_port);
-    }
-    uint8_t lidar_buf[ouster::OS1::lidar_packet_bytes + 1];
-    if (do_config) metadata = OS1::get_metadata(*cli);
-    ouster::OS1::sensor_info info = OS1::parse_metadata(metadata);
-    std::vector<double> xyz_lut = OS1::make_xyz_lut(W, H, info.beam_azimuth_angles, info.beam_altitude_angles);
+    // std::shared_ptr<OS1::client> cli;
+    // if (do_config) {
+    //     std::cout << "Configuring sensor: " << os1_host
+    //               << " UDP Destination:" << os1_udp_dest << std::endl;
+    //     cli = ouster::OS1::init_client(os1_host, os1_udp_dest, mode,
+    //           ouster::OS1::TIME_FROM_INTERNAL_OSC, lidar_port, imu_port);
+    // }
+    // uint8_t lidar_buf[ouster::OS1::lidar_packet_bytes + 1];
+    // if (do_config) metadata = OS1::get_metadata(*cli);
+    // ouster::OS1::sensor_info info = OS1::parse_metadata(metadata);
+    // std::vector<double> xyz_lut = OS1::make_xyz_lut(W, H, info.beam_azimuth_angles, info.beam_altitude_angles);
     int cnt_ok = 0;
 
-    while (!stop_flag) {
-            OS1::client_state st = OS1::poll_client(*cli);
-            if (st & OS1::client_state::LIDAR_DATA) {
-                if (OS1::read_lidar_packet(*cli, lidar_buf)){
-                    WritePCD(xyz_lut, lidar_buf);
-                }
-                if(cnt_ok == 10){
-                    emit connectedOK();
-                }
-            }
+   // while (!stop_flag) {
+            // OS1::client_state st = OS1::poll_client(*cli);
+            // if (st & OS1::client_state::LIDAR_DATA) {
+            //     if (OS1::read_lidar_packet(*cli, lidar_buf)){
+            //         WritePCD(xyz_lut, lidar_buf);
+            //     }
+            //     if(cnt_ok == 10){
+            //         emit connectedOK();
+            //     }
+            // }
 
-            if(count == W*H){
-                std::string ch_ts = ts.getMilliTime();
-                std::string name = dir+"/LiDAR/PCD/i30_LiDAR_" + ch_ts + ".pcd";
-                pcl::io::savePCDFile(name, *cloud, true);
+  if (pcl::io::loadPCDFile<pcl::PointXYZ> ("/home/yh/tt/pcl_ex/test_pcd.pcd", *cloud) == -1) //* load the file
+  {
+    PCL_ERROR ("Couldn't read file test_pcd.pcd \n");
+    cout<<"error loading pcd\n";
+  }
+  emit send_lidar(cloud);
+  cloud.reset( new pcl::PointCloud<pcl::PointXYZ>);
+            // if(count == W*H){
+                // std::string ch_ts = ts.getMilliTime();
+                // std::string name = dir+"/LiDAR/PCD/i30_LiDAR_" + ch_ts + ".pcd";
+                // pcl::io::savePCDFile(name, *cloud, true);
 
-                emit send_lidar(cloud); //emit signal
-                if(writeFile.is_open()){
-                    writeFile << ch_ts << "\n";
-                }
-                cloud.reset( new pcl::PointCloud<pcl::PointXYZ>);
-                count = 0;
-            }
-            //QCoreApplication::processEvents();
+                // emit send_lidar(cloud); //emit signal
+                // if(writeFile.is_open()){
+                //     writeFile << ch_ts << "\n";
+                // }
+                // cloud.reset( new pcl::PointCloud<pcl::PointXYZ>);
+                // count = 0;
+            //}
+            QCoreApplication::processEvents();
             cnt_ok++;
-    }
+  //  }
 }
 
 void lidarThread::get_dir(QString dir_str){

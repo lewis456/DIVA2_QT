@@ -150,5 +150,4 @@ void imuWidget::draw_line(double roll, double pitch)
     glPopMatrix();
     glFlush();
     //swapBuffers();
-    //glFlush();
 }

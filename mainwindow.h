@@ -175,7 +175,7 @@ private:
 
 
 public slots:
-    void display_gps_info(QString latitude, QString longitude);
+    void display_gps_info(QString latitude, QString longitude, double hdop);
     void display_handle_data(QString handle, QString handle_acceleration);
     void display_gear(int);
     void display_turn_indicator(int);

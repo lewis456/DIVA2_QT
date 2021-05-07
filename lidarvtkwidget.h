@@ -70,14 +70,12 @@ class lidarVTKWidget : public QVTKWidget
 {
     Q_OBJECT
 public:
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
     lidarVTKWidget(QWidget *parent = 0);
     void initialVtkWidget();
 
     boost::shared_ptr<pcl::visualization::PCLVisualizer> viewer;
     pcl::PointCloud<pcl::PointXYZ>::Ptr defcloud;
-    Eigen::Affine3f transform;
-    vtkSmartPointer<vtkRenderWindow> render_window;
-    vtkSmartPointer<vtkRenderWindowInteractor> render_window_interactor;
 
 public slots:
     void display_lidar(pcl::PointCloud<pcl::PointXYZ>::Ptr);
@@ -86,3 +84,7 @@ public slots:
 };
 
 #endif // LIDARVTKWIDGET_H
+
+//    Eigen::Affine3f transform;
+//     vtkSmartPointer<vtkRenderWindow> render_window;
+//     vtkSmartPointer<vtkRenderWindowInteractor> render_window_interactor;

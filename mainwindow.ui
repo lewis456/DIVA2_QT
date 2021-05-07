@@ -105,9 +105,9 @@ background-color: rgba(238, 238, 236, 180);</string>
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>480</y>
+      <y>450</y>
       <width>621</width>
-      <height>391</height>
+      <height>421</height>
      </rect>
     </property>
     <layout class="QGridLayout" name="gridLayout_2"/>
@@ -276,16 +276,6 @@ background-color: rgba(255, 255, 255,0);psql -h localhost -p 5432 -U diva -d &qu
     </property>
     <property name="text">
      <string>Free: </string>
-    </property>
-   </widget>
-   <widget class="QListView" name="listView">
-    <property name="geometry">
-     <rect>
-      <x>1570</x>
-      <y>470</y>
-      <width>201</width>
-      <height>301</height>
-     </rect>
     </property>
    </widget>
    <widget class="QLabel" name="label_8">
@@ -521,7 +511,7 @@ color: rgb(98, 114, 164);</string>
       <x>10</x>
       <y>10</y>
       <width>621</width>
-      <height>461</height>
+      <height>431</height>
      </rect>
     </property>
     <property name="styleSheet">
@@ -530,6 +520,67 @@ color: rgb(98, 114, 164);</string>
     </property>
     <property name="text">
      <string/>
+    </property>
+   </widget>
+   <widget class="QLabel" name="signal1">
+    <property name="geometry">
+     <rect>
+      <x>690</x>
+      <y>845</y>
+      <width>10</width>
+      <height>15</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgba(255,255,255,0);
+border-radius: 5px;</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QLabel" name="signal2">
+    <property name="geometry">
+     <rect>
+      <x>700</x>
+      <y>840</y>
+      <width>10</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgba(255,255,255,0);
+border-radius: 5px;</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QLabel" name="signal3">
+    <property name="geometry">
+     <rect>
+      <x>710</x>
+      <y>830</y>
+      <width>10</width>
+      <height>30</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgba(255,255,255,0);
+border-radius: 5px;</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QListWidget" name="listWidget">
+    <property name="geometry">
+     <rect>
+      <x>1570</x>
+      <y>470</y>
+      <width>201</width>
+      <height>311</height>
+     </rect>
     </property>
    </widget>
    <zorder>label_6</zorder>
@@ -554,12 +605,15 @@ color: rgb(98, 114, 164);</string>
    <zorder>label_2</zorder>
    <zorder>total</zorder>
    <zorder>usage</zorder>
-   <zorder>listView</zorder>
    <zorder>label_8</zorder>
    <zorder>label_4</zorder>
    <zorder>label_10</zorder>
    <zorder>progressBar</zorder>
    <zorder>Cam</zorder>
+   <zorder>signal1</zorder>
+   <zorder>signal2</zorder>
+   <zorder>signal3</zorder>
+   <zorder>listWidget</zorder>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">

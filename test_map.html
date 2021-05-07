@@ -8,7 +8,7 @@
     </style>
 </head>
 <body>
-    <div id="map" style="width:550px;;height:775px;"></div>
+    <div id="map" style="width:570px;;height:775px;"></div>
     <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=2c94aabf2a25beec36ce54de98b63f4f&libraries=services"></script>
     <script>
         var container = document.getElementById('map'),
@@ -19,20 +19,23 @@
         var map =  new kakao.maps.Map(container, options);     
         var markers = [];
         var car_pointer = './marker.png', 
-            car_pointer_size = new kakao.maps.Size(28,36),
+            car_pointer_size = new kakao.maps.Size(10,10),
             car_marker_image = new kakao.maps.MarkerImage(car_pointer, car_pointer_size);
         var geocoder = new kakao.maps.services.Geocoder();
         var detailAddr;
 
+        var markerPosition = new kakao.maps.LatLng(37.449620,126.653155);
+
+        var marker=new kakao.maps.Marker({
+            position:markerPosition,
+            image:car_marker_image
+        });
 
         function initMap(){
-            map.panTo( new kakao.maps.LatLng(37.449620,126.653155) );
-            marker = new kakao.maps.Marker({
-                image : car_marker_image,
-                position: new kakao.maps.LatLng(37.449620,126.653155)
-            });
+            var init_position=new kakao.maps.LatLng(37.449620,126.653155); 
+            map.panTo(init_position);
             marker.setMap(map);
-        };
+        }
 
         initMap();
 
@@ -46,6 +49,7 @@
 
         function addMarker(lat, lng){
             map.panTo( new kakao.maps.LatLng(lat,lng));
+            map.setCenter(new kakao.maps.LatLng(lat,lng));
             marker = new kakao.maps.Marker({
                 image : car_marker_image,
                 position: new kakao.maps.LatLng(lat, lng)
@@ -54,18 +58,18 @@
             markers.push(marker);
             if(markers.length == 1 || markers.length % 50 == 0){
                 geocoder.coord2Address(lng, lat, callback);
-            }
-        }
+            };
+        };
 
         function getAddr(){
             return detailAddr;
-        }
+        };
 
         function resetMarker(){
             for(var i=0; i<markers.length; i++){
                 markers[i].setMap(null);
             }
-        }
+        };
        
     </script>
 </body>

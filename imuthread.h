@@ -11,27 +11,11 @@
 #include <QCoreApplication>
 #include <string>
 #include <iostream>
-#include <google/protobuf/
 
 #include "mscl/mscl.h"
 #include "Timestamp.h"
 #include <google/protobuf/text_format.h>
 #include "sensors.pb.h"
-
-class ImuPacket {
-public:
-    ImuPacket();
-    //time_t time;
-    float scaledAccelX, scaledAccelY, scaledAccelZ;
-    float scaledGyroX, scaledGyroY, scaledGyroZ;
-    float scaledMagX, scaledMagY, scaledMagZ;
-    float estRoll, estPitch, estYaw;
-    float estRollUncert, estPitchUncert, estYawUncert;
-    float get_x();
-    float get_y();
-    float get_z();
-};
-
 
 class imuThread : public QThread
 {

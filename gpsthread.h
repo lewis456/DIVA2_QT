@@ -23,7 +23,7 @@ public:
     bool stop_flag = false;
     double Convert_to_dd(double raw);
 
-    double latitude=0, longitude=0;
+    double latitude=0, longitude=0, hdop=0;
 
 public slots:
     //void get_dir(QString);
@@ -33,7 +33,7 @@ private:
     void run() override;
 
 signals:
-    void send_ll(QString, QString);
+    void send_ll(QString, QString, double);
     void send_end();
 
 };

@@ -14,6 +14,7 @@
 #include <opencv2/imgcodecs.hpp>
 
 #include "Timestamp.h"
+#include "sensors.pb.h"
 
 class camThread : public QThread
 {
@@ -27,6 +28,9 @@ public:
     cv::Mat mat;
     char buf[256];
 
+    int rows, cols;
+    vector<uchar> data;
+    
     string dir;
     string path;
     ofstream writeFile;

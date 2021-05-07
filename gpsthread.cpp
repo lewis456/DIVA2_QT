@@ -19,11 +19,10 @@ gpsThread::gpsThread(QObject *parent) : QThread(parent)
 void gpsThread::run() {
     zmq::context_t ctx(1);
     zmq::socket_t gps_sub(ctx, ZMQ_SUB);
-    gps_sub.connect("tcp://127.0.0.1:5563");
+    gps_sub.connect("tcp://127.0.0.1:5564");
     gps_sub.setsockopt(ZMQ_SUBSCRIBE, "GPS", 3);
 
     std::cout << "GPS streaming_start" << std::endl;
-    GpsPacket gp;
     while (!stop_flag) {
         string topic = s_recv(gps_sub);
         sensors::Gps gps;
@@ -31,14 +30,16 @@ void gpsThread::run() {
         gps_sub.recv(&msg);
 
         //protobuf parsing
-        string msg_str(static_cast<char*>(msg.data()), msg.size());
-        gps.ParseFromString(msg_str);
+        gps.ParseFromArray(msg.data(), msg.size());
         latitude = gps.latitude();
         longitude = gps.longitude();
+        hdop=gps.horizontaldilutionofprecision();
+        cout<<gps.latitude()<<" "<<gps.longitude()<<endl;
 
         emit send_ll(
             QString::number(Convert_to_dd(latitude)),
-            QString::number(Convert_to_dd(longitude))
+            QString::number(Convert_to_dd(longitude)),
+            hdop
         );
     }
 }
