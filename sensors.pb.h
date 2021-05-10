@@ -48,7 +48,7 @@ struct TableStruct_sensors_2eproto {
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::AuxiliaryParseTableField aux[]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
-  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[5]
+  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[6]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::FieldMetadata field_metadata[];
   static const ::PROTOBUF_NAMESPACE_ID::internal::SerializationTable serialization_table[];
@@ -71,6 +71,9 @@ extern ImuDefaultTypeInternal _Imu_default_instance_;
 class Lidar;
 struct LidarDefaultTypeInternal;
 extern LidarDefaultTypeInternal _Lidar_default_instance_;
+class Lidar_xyz;
+struct Lidar_xyzDefaultTypeInternal;
+extern Lidar_xyzDefaultTypeInternal _Lidar_xyz_default_instance_;
 }  // namespace sensors
 PROTOBUF_NAMESPACE_OPEN
 template<> ::sensors::Cam* Arena::CreateMaybeMessage<::sensors::Cam>(Arena*);
@@ -78,6 +81,7 @@ template<> ::sensors::Can* Arena::CreateMaybeMessage<::sensors::Can>(Arena*);
 template<> ::sensors::Gps* Arena::CreateMaybeMessage<::sensors::Gps>(Arena*);
 template<> ::sensors::Imu* Arena::CreateMaybeMessage<::sensors::Imu>(Arena*);
 template<> ::sensors::Lidar* Arena::CreateMaybeMessage<::sensors::Lidar>(Arena*);
+template<> ::sensors::Lidar_xyz* Arena::CreateMaybeMessage<::sensors::Lidar_xyz>(Arena*);
 PROTOBUF_NAMESPACE_CLOSE
 namespace sensors {
 
@@ -989,6 +993,159 @@ class Cam PROTOBUF_FINAL :
 };
 // -------------------------------------------------------------------
 
+class Lidar_xyz PROTOBUF_FINAL :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:sensors.Lidar.xyz) */ {
+ public:
+  inline Lidar_xyz() : Lidar_xyz(nullptr) {}
+  ~Lidar_xyz() override;
+  explicit constexpr Lidar_xyz(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  Lidar_xyz(const Lidar_xyz& from);
+  Lidar_xyz(Lidar_xyz&& from) noexcept
+    : Lidar_xyz() {
+    *this = ::std::move(from);
+  }
+
+  inline Lidar_xyz& operator=(const Lidar_xyz& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline Lidar_xyz& operator=(Lidar_xyz&& from) noexcept {
+    if (GetArena() == from.GetArena()) {
+      if (this != &from) InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const Lidar_xyz& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const Lidar_xyz* internal_default_instance() {
+    return reinterpret_cast<const Lidar_xyz*>(
+               &_Lidar_xyz_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    3;
+
+  friend void swap(Lidar_xyz& a, Lidar_xyz& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(Lidar_xyz* other) {
+    if (other == this) return;
+    if (GetArena() == other->GetArena()) {
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(Lidar_xyz* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetArena() == other->GetArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline Lidar_xyz* New() const final {
+    return CreateMaybeMessage<Lidar_xyz>(nullptr);
+  }
+
+  Lidar_xyz* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<Lidar_xyz>(arena);
+  }
+  void CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) final;
+  void CopyFrom(const Lidar_xyz& from);
+  void MergeFrom(const Lidar_xyz& from);
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  inline void SharedCtor();
+  inline void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(Lidar_xyz* other);
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "sensors.Lidar.xyz";
+  }
+  protected:
+  explicit Lidar_xyz(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  private:
+  static void ArenaDtor(void* object);
+  inline void RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  public:
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kXFieldNumber = 1,
+    kYFieldNumber = 2,
+    kZFieldNumber = 3,
+  };
+  // float x = 1;
+  void clear_x();
+  float x() const;
+  void set_x(float value);
+  private:
+  float _internal_x() const;
+  void _internal_set_x(float value);
+  public:
+
+  // float y = 2;
+  void clear_y();
+  float y() const;
+  void set_y(float value);
+  private:
+  float _internal_y() const;
+  void _internal_set_y(float value);
+  public:
+
+  // float z = 3;
+  void clear_z();
+  float z() const;
+  void set_z(float value);
+  private:
+  float _internal_z() const;
+  void _internal_set_z(float value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:sensors.Lidar.xyz)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  float x_;
+  float y_;
+  float z_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_sensors_2eproto;
+};
+// -------------------------------------------------------------------
+
 class Lidar PROTOBUF_FINAL :
     public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:sensors.Lidar) */ {
  public:
@@ -1032,7 +1189,7 @@ class Lidar PROTOBUF_FINAL :
                &_Lidar_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    3;
+    4;
 
   friend void swap(Lidar& a, Lidar& b) {
     a.Swap(&b);
@@ -1093,11 +1250,33 @@ class Lidar PROTOBUF_FINAL :
 
   // nested types ----------------------------------------------------
 
+  typedef Lidar_xyz xyz;
+
   // accessors -------------------------------------------------------
 
   enum : int {
+    kDataFieldNumber = 3,
     kTimestampFieldNumber = 1,
+    kSizeFieldNumber = 2,
   };
+  // repeated .sensors.Lidar.xyz data = 3;
+  int data_size() const;
+  private:
+  int _internal_data_size() const;
+  public:
+  void clear_data();
+  ::sensors::Lidar_xyz* mutable_data(int index);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::sensors::Lidar_xyz >*
+      mutable_data();
+  private:
+  const ::sensors::Lidar_xyz& _internal_data(int index) const;
+  ::sensors::Lidar_xyz* _internal_add_data();
+  public:
+  const ::sensors::Lidar_xyz& data(int index) const;
+  ::sensors::Lidar_xyz* add_data();
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::sensors::Lidar_xyz >&
+      data() const;
+
   // .google.protobuf.Timestamp timestamp = 1;
   bool has_timestamp() const;
   private:
@@ -1116,6 +1295,15 @@ class Lidar PROTOBUF_FINAL :
       PROTOBUF_NAMESPACE_ID::Timestamp* timestamp);
   PROTOBUF_NAMESPACE_ID::Timestamp* unsafe_arena_release_timestamp();
 
+  // float size = 2;
+  void clear_size();
+  float size() const;
+  void set_size(float value);
+  private:
+  float _internal_size() const;
+  void _internal_set_size(float value);
+  public:
+
   // @@protoc_insertion_point(class_scope:sensors.Lidar)
  private:
   class _Internal;
@@ -1123,7 +1311,9 @@ class Lidar PROTOBUF_FINAL :
   template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::sensors::Lidar_xyz > data_;
   PROTOBUF_NAMESPACE_ID::Timestamp* timestamp_;
+  float size_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_sensors_2eproto;
 };
@@ -1172,7 +1362,7 @@ class Can PROTOBUF_FINAL :
                &_Can_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    4;
+    5;
 
   friend void swap(Can& a, Can& b) {
     a.Swap(&b);
@@ -2483,6 +2673,70 @@ inline void Cam::set_allocated_image_data(std::string* image_data) {
 
 // -------------------------------------------------------------------
 
+// Lidar_xyz
+
+// float x = 1;
+inline void Lidar_xyz::clear_x() {
+  x_ = 0;
+}
+inline float Lidar_xyz::_internal_x() const {
+  return x_;
+}
+inline float Lidar_xyz::x() const {
+  // @@protoc_insertion_point(field_get:sensors.Lidar.xyz.x)
+  return _internal_x();
+}
+inline void Lidar_xyz::_internal_set_x(float value) {
+  
+  x_ = value;
+}
+inline void Lidar_xyz::set_x(float value) {
+  _internal_set_x(value);
+  // @@protoc_insertion_point(field_set:sensors.Lidar.xyz.x)
+}
+
+// float y = 2;
+inline void Lidar_xyz::clear_y() {
+  y_ = 0;
+}
+inline float Lidar_xyz::_internal_y() const {
+  return y_;
+}
+inline float Lidar_xyz::y() const {
+  // @@protoc_insertion_point(field_get:sensors.Lidar.xyz.y)
+  return _internal_y();
+}
+inline void Lidar_xyz::_internal_set_y(float value) {
+  
+  y_ = value;
+}
+inline void Lidar_xyz::set_y(float value) {
+  _internal_set_y(value);
+  // @@protoc_insertion_point(field_set:sensors.Lidar.xyz.y)
+}
+
+// float z = 3;
+inline void Lidar_xyz::clear_z() {
+  z_ = 0;
+}
+inline float Lidar_xyz::_internal_z() const {
+  return z_;
+}
+inline float Lidar_xyz::z() const {
+  // @@protoc_insertion_point(field_get:sensors.Lidar.xyz.z)
+  return _internal_z();
+}
+inline void Lidar_xyz::_internal_set_z(float value) {
+  
+  z_ = value;
+}
+inline void Lidar_xyz::set_z(float value) {
+  _internal_set_z(value);
+  // @@protoc_insertion_point(field_set:sensors.Lidar.xyz.z)
+}
+
+// -------------------------------------------------------------------
+
 // Lidar
 
 // .google.protobuf.Timestamp timestamp = 1;
@@ -2560,6 +2814,65 @@ inline void Lidar::set_allocated_timestamp(PROTOBUF_NAMESPACE_ID::Timestamp* tim
   }
   timestamp_ = timestamp;
   // @@protoc_insertion_point(field_set_allocated:sensors.Lidar.timestamp)
+}
+
+// float size = 2;
+inline void Lidar::clear_size() {
+  size_ = 0;
+}
+inline float Lidar::_internal_size() const {
+  return size_;
+}
+inline float Lidar::size() const {
+  // @@protoc_insertion_point(field_get:sensors.Lidar.size)
+  return _internal_size();
+}
+inline void Lidar::_internal_set_size(float value) {
+  
+  size_ = value;
+}
+inline void Lidar::set_size(float value) {
+  _internal_set_size(value);
+  // @@protoc_insertion_point(field_set:sensors.Lidar.size)
+}
+
+// repeated .sensors.Lidar.xyz data = 3;
+inline int Lidar::_internal_data_size() const {
+  return data_.size();
+}
+inline int Lidar::data_size() const {
+  return _internal_data_size();
+}
+inline void Lidar::clear_data() {
+  data_.Clear();
+}
+inline ::sensors::Lidar_xyz* Lidar::mutable_data(int index) {
+  // @@protoc_insertion_point(field_mutable:sensors.Lidar.data)
+  return data_.Mutable(index);
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::sensors::Lidar_xyz >*
+Lidar::mutable_data() {
+  // @@protoc_insertion_point(field_mutable_list:sensors.Lidar.data)
+  return &data_;
+}
+inline const ::sensors::Lidar_xyz& Lidar::_internal_data(int index) const {
+  return data_.Get(index);
+}
+inline const ::sensors::Lidar_xyz& Lidar::data(int index) const {
+  // @@protoc_insertion_point(field_get:sensors.Lidar.data)
+  return _internal_data(index);
+}
+inline ::sensors::Lidar_xyz* Lidar::_internal_add_data() {
+  return data_.Add();
+}
+inline ::sensors::Lidar_xyz* Lidar::add_data() {
+  // @@protoc_insertion_point(field_add:sensors.Lidar.data)
+  return _internal_add_data();
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::sensors::Lidar_xyz >&
+Lidar::data() const {
+  // @@protoc_insertion_point(field_list:sensors.Lidar.data)
+  return data_;
 }
 
 // -------------------------------------------------------------------
@@ -2866,6 +3179,8 @@ inline void Can::set_allocated_data(std::string* data) {
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

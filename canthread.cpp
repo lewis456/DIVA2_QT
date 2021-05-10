@@ -1,4 +1,12 @@
 #include "canthread.h"
+#include <zmq.hpp>
+
+inline static std::string s_recv(zmq::socket_t & socket, int flags = 0) {
+    zmq::message_t message;
+    socket.recv(& message, flags);
+
+    return std::string(static_cast < char *> (message.data()), message.size());
+}
 
 canThread::canThread(QObject *parent) : QThread(parent)
 {
@@ -16,9 +24,18 @@ canThread::canThread(QObject *parent) : QThread(parent)
 }
 
 void canThread::run(){
-	path = dir+"/CAN/i30_CAN_"+ts.getMilliTime()+".csv";
-	writeFile.open(path.c_str());
+	zmq::context_t ctx(3);
+    zmq::socket_t can_sub(ctx, ZMQ_SUB);
+    can_sub.connect("tcp://127.0.0.1:5561");
+    can_sub.setsockopt(ZMQ_SUBSCRIBE, "CAN", 3);
+    sensors::Can can;
     while(!stop_flag){
+        string topic=s_recv(can_sub);
+        zmq::message_t msg;
+        can_sub.recv(&msg);
+
+        can.ParseFromArray(msg.data(), msg.size());
+
         event();
         QThread::msleep(10);
         QCoreApplication::processEvents();

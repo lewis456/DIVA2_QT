@@ -18,6 +18,8 @@
 
 
 #include "Timestamp.h"
+#include <google/protobuf/text_format.h>
+#include "sensors.pb.h"
 
 class CANdata {
 public:

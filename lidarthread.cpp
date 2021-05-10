@@ -1,8 +1,15 @@
 #include "lidarthread.h"
 
+inline static std::string s_recv(zmq::socket_t & socket, int flags = 0) {
+    zmq::message_t message;
+    socket.recv(& message, flags);
+
+    return std::string(static_cast < char *> (message.data()), message.size());
+}
+
 lidarThread::lidarThread(QObject* parent) : QThread(parent)
 {
-    cloud.reset( new pcl::PointCloud<pcl::PointXYZ>);
+    ptr_cloud.reset( new pcl::PointCloud<pcl::PointXYZ>);
 }
 
 void lidarThread::run(){
@@ -33,13 +40,30 @@ void lidarThread::run(){
             //     }
             // }
 
-  if (pcl::io::loadPCDFile<pcl::PointXYZ> ("/home/yh/tt/pcl_ex/test_pcd.pcd", *cloud) == -1) //* load the file
-  {
-    PCL_ERROR ("Couldn't read file test_pcd.pcd \n");
-    cout<<"error loading pcd\n";
-  }
-  emit send_lidar(cloud);
-  cloud.reset( new pcl::PointCloud<pcl::PointXYZ>);
+    zmq::context_t ctx(1);
+    zmq::socket_t lidar_sub(ctx, ZMQ_SUB);
+    lidar_sub.connect("tcp://127.0.0.1:5555");
+    lidar_sub.setsockopt(ZMQ_SUBSCRIBE, "LiDAR", 5);
+    sensors::Lidar lidar;
+
+    while(!stop_flag){
+        string topic=s_recv(lidar_sub);
+        zmq::message_t msg;
+        lidar_sub.recv(&msg);
+
+        lidar.ParseFromArray(msg.data(), msg.size());
+        int size=(int)lidar.size();
+        cloud.resize(size);
+        int i=0;
+        for (auto & point : cloud) {
+            point.x = lidar.data(i).x();
+            point.y = lidar.data(i).y();
+            point.z = lidar.data(i).z();
+        }
+        *ptr_cloud=cloud;
+        emit send_lidar(ptr_cloud);
+    }
+  
             // if(count == W*H){
                 // std::string ch_ts = ts.getMilliTime();
                 // std::string name = dir+"/LiDAR/PCD/i30_LiDAR_" + ch_ts + ".pcd";
@@ -87,7 +111,7 @@ void lidarThread::WritePCD(std::vector<double> xyz_lut, uint8_t* buf){
                 break;
             }
 
-            cloud->push_back(LiDAR);
+            ptr_cloud->push_back(LiDAR);
             count++;
         }
     }

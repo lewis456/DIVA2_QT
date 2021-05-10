@@ -42,7 +42,9 @@
 #include "ouster/viz.h"
 
 #include "Timestamp.h"
-
+#include <google/protobuf/text_format.h>
+#include "sensors.pb.h"
+#include <zmq.hpp>
 
 #define os1_host  "os1-991904000944.local"
 #define os1_udp_dest   "10.5.5.1"
@@ -60,8 +62,8 @@ public:
     bool stop_flag = false;
     Timestamp ts;
 
-    pcl::PointCloud<pcl::PointXYZ>::Ptr cloud; //생성할 PointCloud structure구조체(x,y,z) 정의
-    pcl::PointCloud<pcl::PointXYZ> cloud2;
+    pcl::PointCloud<pcl::PointXYZ>::Ptr ptr_cloud; //생성할 PointCloud structure구조체(x,y,z) 정의
+    pcl::PointCloud<pcl::PointXYZ> cloud;
 
     int W = 1024;
     int H = OS1::pixels_per_column;

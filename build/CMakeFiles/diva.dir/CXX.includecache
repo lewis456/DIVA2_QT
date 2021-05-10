@@ -289,6 +289,8 @@ sensors.pb.h
 /home/yh/git/DIVA2_QT/canthread.cpp
 canthread.h
 /home/yh/git/DIVA2_QT/canthread.h
+zmq.hpp
+-
 
 /home/yh/git/DIVA2_QT/canthread.h
 QObject
@@ -319,6 +321,10 @@ cstring
 -
 Timestamp.h
 /home/yh/git/DIVA2_QT/Timestamp.h
+google/protobuf/text_format.h
+-
+sensors.pb.h
+/home/yh/git/DIVA2_QT/sensors.pb.h
 
 /home/yh/git/DIVA2_QT/gpsthread.cpp
 gpsthread.h
@@ -515,6 +521,12 @@ ouster/viz.h
 /home/yh/git/DIVA2_QT/ouster/viz.h
 Timestamp.h
 /home/yh/git/DIVA2_QT/Timestamp.h
+google/protobuf/text_format.h
+-
+sensors.pb.h
+/home/yh/git/DIVA2_QT/sensors.pb.h
+zmq.hpp
+-
 
 /home/yh/git/DIVA2_QT/lidarvtkwidget.cpp
 lidarvtkwidget.h

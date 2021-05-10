@@ -529,6 +529,8 @@ int counted_frames;
 int idx_for_cnt_frames;
 int *saved_idx_for_cnt_frames;
 QString *saved_token_for_cnt_frames;
+
+//어떤 날짜에 데이터가 저장되어있는지 보고 해당 날짜의 CAM과 Lidar데이터 다운
 void MainWindow::on_pushButton_clicked(){
     std::cout<<"pushbutton\n";
 //    zmq::context_t ctx(1);
@@ -624,6 +626,10 @@ void MainWindow::Setting_Frames(QString Text){
     }
     cout<<"setting_frames end"<<endl;
 }
+
+//DB에 있는 토큰값으로 플레이백
+//CAM과 LiDAR는 토큰값에 해당하는 튜플에 저장된 파일명 사용
+//나머지는 튜플에 저장된 센서값 사용
 void MainWindow::Display_Frame_Datas(QString Text){
     cout<<"display_frame_datas start"<<endl;
     QString idx_file_format;
