@@ -9,182 +9,187 @@ inline static std::string s_recv(zmq::socket_t & socket, int flags = 0) {
 }
 
 canThread::canThread(QObject *parent) : QThread(parent)
-{
-	if (QCanBus::instance()->plugins().contains(QStringLiteral("socketcan"))) {
-		std::cout<<"socketcan"<<std::endl;
-        QString errorString;
-          device = QCanBus::instance()->createDevice(QStringLiteral("socketcan"), QStringLiteral("can0"), &errorString);
-         if (!device) {
-             qDebug() << errorString;
-         }else {
-             device->connectDevice();
-	    }         
-     }
-   			 
+{  			 
 }
 
 void canThread::run(){
 	zmq::context_t ctx(3);
     zmq::socket_t can_sub(ctx, ZMQ_SUB);
-    can_sub.connect("tcp://127.0.0.1:5561");
+    can_sub.connect("tcp://127.0.0.1:5563");
     can_sub.setsockopt(ZMQ_SUBSCRIBE, "CAN", 3);
-    sensors::Can can;
+
     while(!stop_flag){
+        sensors::Can can;
         string topic=s_recv(can_sub);
         zmq::message_t msg;
         can_sub.recv(&msg);
 
         can.ParseFromArray(msg.data(), msg.size());
 
-        event();
-        QThread::msleep(10);
-        QCoreApplication::processEvents();
+        float data_type=can.type();
+        if(data_type==688){           //handle
+            emit send_handle(QString::number(can.data()));
+        }
+        else if(data_type==790){      //rpm
+            emit send_speed(can.data());
+        }
+        else if(data_type==1345){      //방향지시등
+            emit send_turn((int)can.data());
+        }
+        else if(data_type==1322){      //gear
+            emit send_gear((int)can.data());
+        }
+
+        //event();
+        //QThread::msleep(10);
+        //QCoreApplication::processEvents();
     }
 	//connect(&timer, SIGNAL(timeout()), this, SLOT(event()));
     //timer.start(10);
 }
 
-void canThread::event(){
+void canThread::event(){};
+// void canThread::event(){
 
-	CANdata temp;
-    string automatic_transmission_mode;
-    string turn_signal_direction;
-    string turn_signal_blink;
-    string turn_signal_blink_left;
-    string turn_signal_blink_right;
+// 	CANdata temp;
+//     string automatic_transmission_mode;
+//     string turn_signal_direction;
+//     string turn_signal_blink;
+//     string turn_signal_blink_left;
+//     string turn_signal_blink_right;
 
-	QCanBusFrame frame;
+// 	QCanBusFrame frame;
 	
-    QString view;
-    int fid = 0;
-    string view_string;
-    string csv_string;
-    char cancsv[256];
-    //device->waitForFramesReceived(1000);            //sangjun
-    while(device->waitForFramesReceived(1000)){
-     //while(device->framesAvailable()){               //sangjun
+//     QString view;
+//     int fid = 0;
+//     string view_string;
+//     string csv_string;
+//     char cancsv[256];
+//     //device->waitForFramesReceived(1000);            //sangjun
+//     while(device->waitForFramesReceived(1000)){
+//      //while(device->framesAvailable()){               //sangjun
      	
-        frame = device->readFrame();
-        view = frame.toString();
+//         frame = device->readFrame();
+//         view = frame.toString();
 
-        fid = frame.frameId();
-     	view_string = view.toStdString();
+//         fid = frame.frameId();
+//      	view_string = view.toStdString();
 
-         if(fid == 688){
+//          if(fid == 688){
          	
-         	frame_bin += hexToBinary(view_string, 19);
-         	frame_bin += hexToBinary(view_string, 20);
-         	frame_bin += hexToBinary(view_string, 16);
-         	frame_bin += hexToBinary(view_string, 17);
+//          	frame_bin += hexToBinary(view_string, 19);
+//          	frame_bin += hexToBinary(view_string, 20);
+//          	frame_bin += hexToBinary(view_string, 16);
+//          	frame_bin += hexToBinary(view_string, 17);
 
-         	temp.handle_angle = std::stoi(frame_bin,nullptr,2);
-         	handle_qstring = QString::number(temp.handle_angle);
+//          	temp.handle_angle = std::stoi(frame_bin,nullptr,2);
+//          	handle_qstring = QString::number(temp.handle_angle);
 
-         	frame_bin = ""; 
+//          	frame_bin = ""; 
 
-         	frame_bin += hexToBinary(view_string,22);
-         	frame_bin += hexToBinary(view_string,23);
-         	temp.handle_accel=  std::stoi(frame_bin,nullptr,2);
-         	handle_qstring2 = QString::number(temp.handle_accel);
+//          	frame_bin += hexToBinary(view_string,22);
+//          	frame_bin += hexToBinary(view_string,23);
+//          	temp.handle_accel=  std::stoi(frame_bin,nullptr,2);
+//          	handle_qstring2 = QString::number(temp.handle_accel);
 
-         	emit send_handle(handle_qstring, handle_qstring2);
+//          	emit send_handle(handle_qstring, handle_qstring2);
 
 
-        	//QCoreApplication::processEvents();
-         	frame_bin = ""; 
-         	device->clear();
+//         	//QCoreApplication::processEvents();
+//          	frame_bin = ""; 
+//          	device->clear();
 
-         }
-         if(fid == 790){
-         	frame_bin += hexToBinary(view_string, 34);
-         	frame_bin += hexToBinary(view_string, 35);
+//          }
+//          if(fid == 790){
+//          	frame_bin += hexToBinary(view_string, 34);
+//          	frame_bin += hexToBinary(view_string, 35);
          	
-         	temp.vehicle_speed = std::stoi(frame_bin,nullptr,2);
+//          	temp.vehicle_speed = std::stoi(frame_bin,nullptr,2);
 
-         	emit send_speed(temp.vehicle_speed);
-        	//QCoreApplication::processEvents();
-        	frame_bin = "";
-        	device->clear();
+//          	emit send_speed(temp.vehicle_speed);
+//         	//QCoreApplication::processEvents();
+//         	frame_bin = "";
+//         	device->clear();
       
-         }
-         if(fid == 1322){//automatic transmission
-         	automatic_transmission_mode = "";
-         	automatic_transmission_mode += hexToBinary(view_string, 19);
-         	automatic_transmission_mode += hexToBinary(view_string, 20);
-            if(automatic_transmission_mode.at(7) == '0'){
-                if(automatic_transmission_mode.at(6) == '1'){
-                     //parking
-                     temp.gear = 0; //'P';
-                     cout<<"P"<<endl;
-                     emit send_gear(0);
-                 }
-                 else if(automatic_transmission_mode.at(5) == '1'){
-                     //rewind
-                     temp.gear = 1; //'R';
-                     cout<<"R"<<endl;
-                     emit send_gear(1);
-                 }
-                 else if(automatic_transmission_mode.at(4) == '1'){
-                     //neutral
-                     temp.gear = 2; //'N';
-                     cout<<"N"<<endl;
-                     emit send_gear(2);
-                 }
-                 else if(automatic_transmission_mode.at(3) == '1'){
-                     //drive
-                     temp.gear = 3;//'D';
-                     cout<<"D"<<endl;
-                     emit send_gear(3);
-                 }
-    			}
-                //QCoreApplication::processEvents();
-    			device->clear();
-        }
-        if(fid == 1345){ //direction light
-        	turn_signal_direction = "";
-             turn_signal_blink_left = "";
-             turn_signal_blink_right = "";
-             turn_signal_direction += hexToBinary(view_string, 32);
-             turn_signal_blink_left +=hexToBinary(view_string, 23); // left
-             turn_signal_blink_right += hexToBinary(view_string, 37); // right
+//          }
+//          if(fid == 1322){//automatic transmission
+//          	automatic_transmission_mode = "";
+//          	automatic_transmission_mode += hexToBinary(view_string, 19);
+//          	automatic_transmission_mode += hexToBinary(view_string, 20);
+//             if(automatic_transmission_mode.at(7) == '0'){
+//                 if(automatic_transmission_mode.at(6) == '1'){
+//                      //parking
+//                      temp.gear = 0; //'P';
+//                      cout<<"P"<<endl;
+//                      emit send_gear(0);
+//                  }
+//                  else if(automatic_transmission_mode.at(5) == '1'){
+//                      //rewind
+//                      temp.gear = 1; //'R';
+//                      cout<<"R"<<endl;
+//                      emit send_gear(1);
+//                  }
+//                  else if(automatic_transmission_mode.at(4) == '1'){
+//                      //neutral
+//                      temp.gear = 2; //'N';
+//                      cout<<"N"<<endl;
+//                      emit send_gear(2);
+//                  }
+//                  else if(automatic_transmission_mode.at(3) == '1'){
+//                      //drive
+//                      temp.gear = 3;//'D';
+//                      cout<<"D"<<endl;
+//                      emit send_gear(3);
+//                  }
+//     			}
+//                 //QCoreApplication::processEvents();
+//     			device->clear();
+//         }
+//         if(fid == 1345){ //direction light
+//         	turn_signal_direction = "";
+//              turn_signal_blink_left = "";
+//              turn_signal_blink_right = "";
+//              turn_signal_direction += hexToBinary(view_string, 32);
+//              turn_signal_blink_left +=hexToBinary(view_string, 23); // left
+//              turn_signal_blink_right += hexToBinary(view_string, 37); // right
 
-             if(turn_signal_blink_left.at(0) == '1'){
-                 temp.turn_indicator = 0;//'L';
-                 cout<<"L"<<endl;
-                  emit send_turn(0);
-             }
-             else if(turn_signal_blink_right.at(1) == '1'){ // right
-                 temp.turn_indicator = 1;//'R';
-                 cout<<"R"<<endl;
-                  emit send_turn(1);
-             }
-             else{
-                 temp.turn_indicator = 2;//' ';
-                 cout<<"None"<<endl;
-                 emit send_turn(2);
-             }
-             //QCoreApplication::processEvents();
-             device->clear();
-        }
+//              if(turn_signal_blink_left.at(0) == '1'){
+//                  temp.turn_indicator = 0;//'L';
+//                  cout<<"L"<<endl;
+//                   emit send_turn(0);
+//              }
+//              else if(turn_signal_blink_right.at(1) == '1'){ // right
+//                  temp.turn_indicator = 1;//'R';
+//                  cout<<"R"<<endl;
+//                   emit send_turn(1);
+//              }
+//              else{
+//                  temp.turn_indicator = 2;//' ';
+//                  cout<<"None"<<endl;
+//                  emit send_turn(2);
+//              }
+//              //QCoreApplication::processEvents();
+//              device->clear();
+//         }
 
 
-        const char* mtime = ts.p_time();
-        sprintf(cancsv, "%s,%d,%d,%d,%d,%d\n", mtime, temp.handle_angle, temp.handle_accel, temp.vehicle_speed, temp.gear, temp.turn_indicator);
-        writeFile.write(cancsv,strlen(cancsv));
+//         const char* mtime = ts.p_time();
+//         sprintf(cancsv, "%s,%d,%d,%d,%d,%d\n", mtime, temp.handle_angle, temp.handle_accel, temp.vehicle_speed, temp.gear, temp.turn_indicator);
+//         writeFile.write(cancsv,strlen(cancsv));
         
-        device->clear();
-    }
+//         device->clear();
+//     }
 
-}
+// }
 
 void canThread::stop(){
 	stop_flag = true;
     emit send_end();
     //disconnect(&timer, SIGNAL(timeout()), this, SLOT(event()));
     //timer.stop();
-    device->disconnectDevice();
-    delete device;
-    writeFile.close();
+    // device->disconnectDevice();
+    // delete device;
+    // writeFile.close();
 }
 
 void canThread::get_dir(QString dir_str){

@@ -143,29 +143,29 @@ void MainWindow::display_cam(QImage image){
     QCoreApplication::processEvents();
 }
 
-void MainWindow::display_handle_data(QString str, QString str2){
+void MainWindow::display_handle_data(QString str){
     str.prepend("Handle degree : ");
-    str.append("\nHandle acceleration : ");
-    str.append(str2);
+    // str.append("\nHandle acceleration : ");
+    // str.append(str2);
     ui->label_5->setText(str);
     ui->label_5->show();
     QCoreApplication::processEvents();
 }
 
-void MainWindow::speedChanged(int value){
+void MainWindow::speedChanged(float value){
     mSpeedNeedle->setCurrentValue(value);
     QCoreApplication::processEvents();
 }
 
 void MainWindow::display_gear(int gear){
-    if(gear == 0){//P
-        redRectLabel->move(57, 295); //p
-    }else if(gear == 1){//R
-        redRectLabel->move(107, 295); //R
-    }else if(gear == 2){//N
-        redRectLabel->move(157, 295); //N
-    }else if(gear == 3){//D
-        redRectLabel->move(207, 295); //D
+    if(gear == 1){//P
+        redRectLabel->move(1356, 245); //p
+    }else if(gear == 2){//R
+        redRectLabel->move(1406, 245); //R
+    }else if(gear == 3){//N
+        redRectLabel->move(1456, 245); //N
+    }else if(gear == 4){//D
+        redRectLabel->move(1506, 245); //D
     }else{
         return;
     }
@@ -173,13 +173,19 @@ void MainWindow::display_gear(int gear){
 }
 
 void MainWindow::display_turn_indicator(int turn){
-    if(turn == 0){//left
+    if(turn == 1){//left
         lArrowLabel->show();
-    }else if(turn == 1){//right
+        rArrowLabel->hide();
+    }else if(turn == 2){//right
         rArrowLabel->show();
-    }else if(turn == 2){//none
+        lArrowLabel->show();
+    }else if(turn == 0){//none
         lArrowLabel->hide();
         rArrowLabel->hide();
+    }
+    else if(turn==3){
+        lArrowLabel->show();
+        rArrowLabel->show();
     }
     QCoreApplication::processEvents();
 }
@@ -202,13 +208,14 @@ void MainWindow::Make(){
     ui->label->setPixmap(rpix);
     ui->label_2->setPixmap(lpix);
     
-//    QPixmap redRectPixm("/home/yh/DIVA_QT/resource/square.png");
-//    redRectLabel = new QLabel(this);
-//    redRectLabel->setStyleSheet("QLabel { background-color: rgba(255, 255, 255, 0); }");
-//    redRectLabel->setPixmap(redRectPixm);
-//    redRectLabel->resize(35,35);
-//    redRectLabel->move(57, 295); //p
-//    redRectLabel->show();
+   QPixmap redRectPixm("/home/yh/DIVA2_QT/resource/square.png");
+   redRectLabel = new QLabel(this);
+   redRectLabel->setStyleSheet("QLabel { background-color: rgba(255, 255, 255, 0); }");
+   redRectLabel->setPixmap(redRectPixm);
+   redRectLabel->resize(35,35);
+   redRectLabel->move(1306, 245); //p
+   redRectLabel->raise();
+   redRectLabel->show();
 
 
     QPixmap lArrowPixm("/home/yh/DIVA2_QT/resource/leftarrow.png");
@@ -344,8 +351,8 @@ void MainWindow::Initializing_for_Live(){
     }
     if(use_can){
         connect(ui->actionLive_Streaming, SIGNAL(triggered()), cant, SLOT(start()));
-        connect(cant, SIGNAL(send_handle(QString, QString)),this, SLOT(display_handle_data(QString, QString)));
-        connect(cant, SIGNAL(send_speed(int)),this, SLOT(speedChanged(int)));
+        connect(cant, SIGNAL(send_handle(QString)),this, SLOT(display_handle_data(QString)));
+        connect(cant, SIGNAL(send_speed(float)),this, SLOT(speedChanged(float)));
         connect(cant, SIGNAL(send_gear(int)), this, SLOT(display_gear(int)));
         connect(cant, SIGNAL(send_turn(int)), this, SLOT(display_turn_indicator(int)));
         connect(ui->actionStreaming_End, SIGNAL(triggered()), cant, SLOT(stop()));
@@ -733,7 +740,7 @@ void MainWindow::Display_Can_Data(QString Text){
     gear=this->can_from_db->value(4).toString();
     turn=this->can_from_db->value(5).toString();
     
-    this->display_handle_data(handle, handle_ac);
+    this->display_handle_data(handle);
     this->display_gear(gear.toInt());
     this->display_turn_indicator(turn.toInt());
     this->speedChanged(speed.toInt());

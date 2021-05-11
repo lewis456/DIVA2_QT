@@ -77,8 +77,8 @@ public:
      string frame_id_string;
 
 signals:
-	void send_speed(int);
-	void send_handle(QString,  QString);
+	void send_speed(float);
+	void send_handle(QString);
 	void send_gear(int);
 	void send_turn(int);
 	void send_end();

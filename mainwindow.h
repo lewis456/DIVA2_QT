@@ -176,14 +176,14 @@ private:
 
 public slots:
     void display_gps_info(QString latitude, QString longitude, double hdop);
-    void display_handle_data(QString handle, QString handle_acceleration);
+    void display_handle_data(QString handle);
     void display_gear(int);
     void display_turn_indicator(int);
     void Display_Stop();
     void start_can_streaming();
     void gps_view_initialize();
     void display_cam(QImage image);
-    void speedChanged(int value);
+    void speedChanged(float value);
     void display_imu_xyz(float, float, float);
 
 private slots:
