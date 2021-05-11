@@ -213,6 +213,9 @@ private slots:
     void on_gps_cb_stateChanged(int arg1);
 
     void setUsage();
+
+    void sensing_stop();
+    void sensing_start();
 signals:
     void start();
     void send_dir(QString);

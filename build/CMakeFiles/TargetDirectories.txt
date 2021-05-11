@@ -1,6 +1,0 @@
-/home/yh/git/DIVA2_QT/build/CMakeFiles/edit_cache.dir
-/home/yh/git/DIVA2_QT/build/CMakeFiles/ouster_viz.dir
-/home/yh/git/DIVA2_QT/build/CMakeFiles/rebuild_cache.dir
-/home/yh/git/DIVA2_QT/build/CMakeFiles/diva.dir
-/home/yh/git/DIVA2_QT/build/CMakeFiles/ouster_viz_autogen.dir
-/home/yh/git/DIVA2_QT/build/CMakeFiles/diva_autogen.dir

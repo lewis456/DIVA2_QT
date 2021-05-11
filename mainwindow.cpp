@@ -19,7 +19,9 @@ MainWindow::MainWindow(QWidget *parent)
     qRegisterMetaType<pcl::PointCloud<pcl::PointXYZ>::Ptr >("pcl::PointCloud<pcl::PointXYZ>::Ptr");
     gpscnt = 0;
     connect(ui->actionInitializing, SIGNAL(triggered()), this, SLOT(Initializing_for_Live()));  
+    connect(ui->actionLive_Streaming, SIGNAL(triggered()), this, SLOT(sensing_start()));
     connect(ui->actionInitializing_2, SIGNAL(triggered()), this, SLOT(Initializing_for_Playback()));  
+    connect(ui->actionStreaming_End, SIGNAL(triggered()), this, SLOT(sensing_stop()));
 }
 
 MainWindow::~MainWindow()
@@ -811,3 +813,10 @@ void MainWindow::display_imu_xyz(float x, float y, float z){
     QCoreApplication::processEvents();
 }
 
+void MainWindow::sensing_start(){
+    int ret=system("/home/yh/real/diva2/build/MobilePlatform/Sensing/MP_sensing &");
+}
+
+void MainWindow::sensing_stop(){
+    int ret=system("pkill -ef MP_sensing");
+}
