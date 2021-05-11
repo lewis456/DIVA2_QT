@@ -18,11 +18,11 @@ void imuThread::run() {
 
     zmq::context_t ctx(2);
     zmq::socket_t imu_sub(ctx, ZMQ_SUB);
-    imu_sub.connect( "tcp://127.0.0.1:5565");
+    imu_sub.connect( "tcp://127.0.0.1:5563");
     imu_sub.setsockopt(ZMQ_SUBSCRIBE,  "IMU", 3);
     cout<<"imu run"<<endl;
-    sensors::Imu imu;
     while(!stop_flag) {
+        sensors::Imu imu;
         string topic=s_recv(imu_sub);
         zmq::message_t msg;
         imu_sub.recv(&msg);

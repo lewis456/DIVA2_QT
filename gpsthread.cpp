@@ -19,7 +19,7 @@ gpsThread::gpsThread(QObject *parent) : QThread(parent)
 void gpsThread::run() {
     zmq::context_t ctx(1);
     zmq::socket_t gps_sub(ctx, ZMQ_SUB);
-    gps_sub.connect("tcp://127.0.0.1:5564");
+    gps_sub.connect("tcp://127.0.0.1:5563");
     gps_sub.setsockopt(ZMQ_SUBSCRIBE, "GPS", 3);
 
     std::cout << "GPS streaming_start" << std::endl;

@@ -18,7 +18,7 @@ void lidarVTKWidget::initialVtkWidget(){
 
 void lidarVTKWidget::display_lidar(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud){
     viewer->updatePointCloud(cloud, "cloud");
-    viewer->resetCamera();
+    //viewer->resetCamera();
     this->update();
     while (!viewer->wasStopped ()) {
        viewer->spinOnce ();

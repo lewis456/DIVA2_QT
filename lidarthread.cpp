@@ -42,11 +42,11 @@ void lidarThread::run(){
 
     zmq::context_t ctx(1);
     zmq::socket_t lidar_sub(ctx, ZMQ_SUB);
-    lidar_sub.connect("tcp://127.0.0.1:5555");
+    lidar_sub.connect("tcp://127.0.0.1:5553");
     lidar_sub.setsockopt(ZMQ_SUBSCRIBE, "LiDAR", 5);
-    sensors::Lidar lidar;
 
     while(!stop_flag){
+        sensors::Lidar lidar;
         string topic=s_recv(lidar_sub);
         zmq::message_t msg;
         lidar_sub.recv(&msg);
