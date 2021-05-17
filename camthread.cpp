@@ -57,14 +57,8 @@ void camThread::run(){
          
     }
 }
-
-void camThread::get_dir(QString dir_str){
-    dir = dir_str.toStdString();
-}
 void camThread::stop(){
     stop_flag = true;
-    writeFile.close();
-    cap.release();
 }
  // int rows, cols, type;
             // cv::Mat img;

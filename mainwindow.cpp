@@ -19,9 +19,9 @@ MainWindow::MainWindow(QWidget *parent)
     qRegisterMetaType<pcl::PointCloud<pcl::PointXYZ>::Ptr >("pcl::PointCloud<pcl::PointXYZ>::Ptr");
     gpscnt = 0;
     connect(ui->actionInitializing, SIGNAL(triggered()), this, SLOT(Initializing_for_Live()));  
-    connect(ui->actionLive_Streaming, SIGNAL(triggered()), this, SLOT(sensing_start()));
+    //connect(ui->actionLive_Streaming, SIGNAL(triggered()), this, SLOT(sensing_start()));
     connect(ui->actionInitializing_2, SIGNAL(triggered()), this, SLOT(Initializing_for_Playback()));  
-    connect(ui->actionStreaming_End, SIGNAL(triggered()), this, SLOT(sensing_stop()));
+    //connect(ui->actionStreaming_End, SIGNAL(triggered()), this, SLOT(sensing_stop()));
 }
 
 MainWindow::~MainWindow()
@@ -223,9 +223,9 @@ void MainWindow::Make(){
     lArrowLabel  = new QLabel(this); lArrowLabel->setStyleSheet("QLabel { background-color: rgba(255, 255, 255, 0); }");
     rArrowLabel = new QLabel(this); rArrowLabel->setStyleSheet("QLabel { background-color: rgba(255, 255, 255, 0); }");
     lArrowLabel->setPixmap(lArrowPixm);
-    lArrowLabel->setGeometry(50,360,80,80);
+    lArrowLabel->setGeometry(1300,280,80,80);
     rArrowLabel->setPixmap(rArrowPixm);
-    rArrowLabel->setGeometry(170,360,80,80);
+    rArrowLabel->setGeometry(1420,280,80,80);
     lArrowLabel->hide(); rArrowLabel->hide();
 
     //lidar widget
@@ -308,22 +308,6 @@ void MainWindow::Initializing_for_Live(){
     live_str.append(QString::fromLocal8Bit(ts.getDate().c_str()));
     ui->label_7->setText(live_str);
 
-//    save_data_dir = QFileDialog::getExistingDirectory(this, "Select Driving Directory to Stroing Datas", QDir::currentPath(),QFileDialog::ShowDirsOnly);
-//    save_data_dir = this->Check_Directory(save_data_dir);
-//    save_data_str = save_data_dir.toStdString();
-    
-    if(use_gps)
-        connect(this, SIGNAL(send_dir(QString)), gt, SLOT(get_dir(QString)));
-    if(use_cam)
-        connect(this, SIGNAL(send_dir(QString)), ct, SLOT(get_dir(QString)));
-    if(use_lidar)
-        connect(this, SIGNAL(send_dir(QString)), lt, SLOT(get_dir(QString)));
-    if(use_imu)
-        connect(this, SIGNAL(send_dir(QString)), it, SLOT(get_dir(QString)));
-    if(use_can)
-        connect(this, SIGNAL(send_dir(QString)), cant, SLOT(get_dir(QString)));
-    //emit send_dir(save_data_dir);
-
     if(use_gps){
         connect(ui->actionLive_Streaming, SIGNAL(triggered()), gt, SLOT(start()));
         connect(gt, SIGNAL(send_ll(QString, QString, double)), this, SLOT(display_gps_info(QString, QString, double))); 
@@ -365,89 +349,9 @@ void MainWindow::start_can_streaming(){
     cout<<"here"<<endl;
 }  
 
-
-QString MainWindow::Check_Directory(QString dirpath){
-    QDir root(dirpath);
-    if(root.exists()){
-        dirpath.append("/");
-        dirpath.append(QString::fromLocal8Bit(ts.getDate().c_str()));
-        QString dirpath1 = dirpath;
-        QString dirpath2 = dirpath;
-        QString dirpath3 = dirpath;
-        QString dirpath4 = dirpath;
-        QString dirpath5 = dirpath;
-        QString dirpath6 = dirpath;
-        QDir camdir(dirpath1.append("/CAM/JPG"));
-        QDir lidardir(dirpath2.append("/LiDAR/PCD"));
-        QDir gpsdir(dirpath3.append("/GPS"));
-        QDir imudir(dirpath4.append("/IMU"));
-        QDir candir(dirpath5.append("/CAN"));
-        QDir jsondir(dirpath6.append("/JSON"));
-        if(!camdir.exists()){
-            camdir.mkpath(".");
-        }
-        if(!lidardir.exists()){
-            lidardir.mkpath(".");
-        }
-        if(!gpsdir.exists()){
-            gpsdir.mkpath(".");
-        }
-        if(!imudir.exists()){
-            imudir.mkpath(".");
-        }
-        if(!candir.exists()){
-            candir.mkpath(".");
-        }
-        if(!jsondir.exists()){
-            jsondir.mkpath(".");
-        }
-    }else{
-        cout<<"Incorrect Directory Path"<<endl;
-        return NULL;
-    }
-    return dirpath;
-}
-
-
 void MainWindow::initial_map(){
     mpage->setUrl(QUrl("http://localhost:8080/map_display2.html"));
     //mpage->setView(mview);
-}
-
-
-
-void MainWindow::on_actionJSON_Parsing_triggered(){
-
-    save_data_dir = QFileDialog::getExistingDirectory(this, "Select Driving Directory Raw Data Stored", QDir::currentPath(),QFileDialog::ShowDirsOnly);
-    save_data_str = save_data_dir.toStdString();
-    mj = new MakeJson(save_data_str);
-    
-   
-    mj->Sensor(5);
-    mj->Log(0);
-    mj->Frame();
-    mj->Scene();
-    mj->Frame_Data();
-    mj->Gps_Data();
-    mj->Imu_Data();
-    mj->Can_Data();
-    QMessageBox msgBox;
-    msgBox.setWindowTitle("JSON Parsing");
-    msgBox.setText("JSON Parsing process ended successfully. ");
-    msgBox.setStyleSheet("background-color: rgb(255, 255, 255)");
-    msgBox.exec();
-    
-}
-
-void MainWindow::on_actionDB_Storing_triggered(){
-    dir = QFileDialog::getExistingDirectory(this, "Select Driving Directory to Saving JSON files to DB", QDir::currentPath(),QFileDialog::ShowDirsOnly);
-    string fpath = dir.toStdString();
-    sdb = new storingDB(fpath);
-    QMessageBox msgBox;
-    msgBox.setWindowTitle("DB Storing");
-    msgBox.setText("DB Storing process ended successfully. ");
-    msgBox.setStyleSheet("background-color: rgb(255, 255, 255)");
-    msgBox.exec();
 }
 
 void MainWindow::Initializing_for_Playback(){
@@ -465,7 +369,7 @@ void MainWindow::Initializing_for_Playback(){
     }
 }
 
-//psql -h localhost -p 5432 -U diva -d "diva"
+
 struct MainWindow::CurrentLog
 {
     QString t;
@@ -477,12 +381,12 @@ struct MainWindow::CurrentLog
 
 void MainWindow::get_log_token(){
     cout<<"get_log_token start"<<endl;
-    //ui->label_3->clear();
+    ui->Date_list->clear();
     this_is_get_log = true;
     this->log_from_db = new QSqlQuery(this->database);
     this->log_from_db->exec("SELECT * FROM LOG;");
     MainWindow::CurrentLog current_log;
-    //this->log_from_db->first();
+    this->log_from_db->first();
     
     while(1){
         if(this->log_from_db->next()){
@@ -490,7 +394,7 @@ void MainWindow::get_log_token(){
             current_log.v = this->log_from_db->value(2).toString();
             current_log.d =  this->log_from_db->value(1).toString();
             logs.push_back(current_log);
-            //ui->label_4->addItem(current_log.d);
+            ui->Scene_list->addItem(current_log.d);
         }else break;
     }
     cout<<"get_log_token end"<<endl;
@@ -525,7 +429,7 @@ void MainWindow::Display_Scene(QString Text){
             cout<<"11"<<endl;
             Scene_temp.prepend("scene_");
             cout<<"12"<<endl;
-            //ui->label_3->addItem(Scene_temp);
+            ui->Scene_list->addItem(Scene_temp);
             cout<<"13"<<endl;
             idx++;
             cout<<"14"<<endl;
@@ -541,54 +445,33 @@ QString *saved_token_for_cnt_frames;
 
 //어떤 날짜에 데이터가 저장되어있는지 보고 해당 날짜의 CAM과 Lidar데이터 다운
 void MainWindow::on_pushButton_clicked(){
-    std::cout<<"pushbutton\n";
-//    zmq::context_t ctx(1);
-//    zmq::socket_t req(ctx, ZMQ_REQ);
-//    req.connect("tcp://127.0.0.1:5556");
-//    string req_scene="hi";
-//    zmq::message_t msg(req_scene.size());
-//    memcpy(msg.data(), req_scene.data(), req_scene.size());
-//    req.send(msg);
-
-//    zmq::message_t scene_msg;
-//    req.recv(&scene_msg);
-//    string scene_s(static_cast<char*>(scene_msg.data()), scene_msg.size());
-
-//    string str_arr[100];
-//    int tok_cnt=0;
-//    char str_buff[100];
-//    strcpy(str_buff, scene_s.c_str());
-//    char *tok=strtok(str_buff, ",");
-
-//    while(tok!=nullptr){
-//        str_arr[tok_cnt++]=string(tok);
-//        tok=strtok(nullptr, ",");
-//        ui->listWidget->addItem(tok);
-//    }
-    char* tmp="hi";
-    ui->listWidget->addItem(QString(tmp));
-    // cout<<"on_push_start"<<endl;
-    // if(this_is_get_log){
-    //     //int log_row = ui->label_4->currentRow();
-    //     //CurrentLog current_log = logs.at(log_row);
-    //     QString log_str = "Vehicle : ";
-    //     log_str.append(current_log.v);
-    //     log_str.append(", Date : ");
-    //     log_str.append(current_log.d);
-    //     ui->label_7->setText(log_str);
-    //     this_is_get_log = false;
-    //     this->Display_Scene(current_log.t);
-    // }else{
-    //     //int item_row =  ui->label_3->currentRow();
-    //     // QString fftoken=scenes_ftoken.at(item_row);
-    //     // nbr_frames = scenes_nbrframes.at(item_row);
-    //     counted_frames = 0;
-    //     this->Setting_Frames(fftoken);
-    // }
+     cout<<"on_push_start"<<endl;
+     if(this_is_get_log){
+         int log_row = ui->Date_list->currentRow();
+         CurrentLog current_log = logs.at(log_row);
+         QString log_str = "Date : ";
+         log_str.append(current_log.d);
+         selected_date=current_log.d;
+         ui->label_7->setText(log_str);
+         this_is_get_log = false;
+         this->Display_Scene(current_log.t);
+         ui->pushButton->setText("Play");
+         //해당 날짜 데이터 다운받는 expect script실행
+         string command="expect -f ../recv_file.exp " ;
+         command.append(get_current_dir_name());
+         command.append(selected_date.toStdString());
+         int ret=system(command.c_str());
+     }else{
+         int item_row =  ui->Scene_list->currentRow();
+          QString fftoken=scenes_ftoken.at(item_row);
+          nbr_frames = scenes_nbrframes.at(item_row);
+         counted_frames = 0;
+         this->Setting_Frames(fftoken);
+     }
 }
 
 
-void MainWindow::on_label_3_itemClicked(QListWidgetItem *item){
+void MainWindow::on_Scene_list_itemClicked(QListWidgetItem *item){
     camWidget->clear();
     this->display_flag = true;
     this->gps_view_initialize();
@@ -640,6 +523,16 @@ void MainWindow::Setting_Frames(QString Text){
 //CAM과 LiDAR는 토큰값에 해당하는 튜플에 저장된 파일명 사용
 //나머지는 튜플에 저장된 센서값 사용
 void MainWindow::Display_Frame_Datas(QString Text){
+    //저장된 폴더 경로
+    //build/YYYY-MM-DD/CAM
+    QString cur_dir="./";
+    cur_dir.append(selected_date);
+    cur_dir.append("/");
+    
+    QString pcd_dir=cur_dir+"LIDAR/";
+
+    QString cam_dir=cur_dir + "CAM/";
+
     cout<<"display_frame_datas start"<<endl;
     QString idx_file_format;
     QString idx_frame_data_token;
@@ -656,13 +549,13 @@ void MainWindow::Display_Frame_Datas(QString Text){
     this->frame_data_pcd_from_db -> exec(selectq2);
 
     this->frame_data_pcd_from_db->first();
-    QString idx_lidar_filename = this->frame_data_pcd_from_db->value(3).toString();
+    QString idx_lidar_filename =pcd_dir + this->frame_data_pcd_from_db->value(3).toString();
     emit send_pcd(idx_lidar_filename);
     QCoreApplication::processEvents();
 
     this->frame_data_jpg_from_db->first();
     QPixmap temp_jpeg;
-    QString idx_jpg_filename =  this->frame_data_jpg_from_db->value(3).toString();
+    QString idx_jpg_filename = cam_dir+ this->frame_data_jpg_from_db->value(3).toString();
     temp_jpeg.load(idx_jpg_filename);
     camWidget->setPixmap(temp_jpeg.scaled(camWidget->width(),camWidget->height(), Qt::KeepAspectRatio));
 
@@ -722,7 +615,6 @@ void MainWindow::Display_Imu_Data(QString Text){
 
 void MainWindow::Display_Can_Data(QString Text){
     QString handle;
-    QString handle_ac;
     QString speed;
     QString gear;
     QString turn;
@@ -735,7 +627,6 @@ void MainWindow::Display_Can_Data(QString Text){
 
     this->can_from_db->first();
     handle = this->can_from_db->value(1).toString();
-    handle_ac =this->can_from_db->value(2).toString();
     speed =this->can_from_db->value(3).toString(); //speed 
     gear=this->can_from_db->value(4).toString();
     turn=this->can_from_db->value(5).toString();
@@ -752,10 +643,10 @@ bool MainWindow::setting_DB(){
     cout<<"setting db start"<<endl;
         // *****Set DB Information*****
         QSqlDatabase database=QSqlDatabase::addDatabase("QPSQL7");
-        database.setDatabaseName("diva");
-        database.setHostName("localhost");
-        database.setUserName("diva");
-        database.setPassword("password");
+        database.setDatabaseName("diva2");
+        database.setHostName("165.246.39.124");
+        database.setUserName("diva2");
+        database.setPassword("1234");
         database.setPort(5432);
         bool con = false;
         if (database.open()){

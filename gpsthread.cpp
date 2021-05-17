@@ -49,10 +49,6 @@ void gpsThread::stop(){
     emit send_end();
 }
 
-// void gpsThread::get_dir(QString dir_str){
-//     dir = dir_str.toStdString();
-// }
-
 double gpsThread::Convert_to_dd(double raw){
     int dd = static_cast<int>(raw/100);
     double ddddd = (raw - static_cast<double>(dd*100))/60;

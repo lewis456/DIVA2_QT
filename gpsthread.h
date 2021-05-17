@@ -26,7 +26,6 @@ public:
     double latitude=0, longitude=0, hdop=0;
 
 public slots:
-    //void get_dir(QString);
     void stop();
 
 private:

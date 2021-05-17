@@ -60,36 +60,17 @@ class lidarThread : public QThread
 public:
     explicit lidarThread(QObject *parent = 0);
     bool stop_flag = false;
-    Timestamp ts;
 
     pcl::PointCloud<pcl::PointXYZ>::Ptr ptr_cloud; //생성할 PointCloud structure구조체(x,y,z) 정의
     pcl::PointCloud<pcl::PointXYZ> cloud;
 
-    int W = 1024;
-    int H = OS1::pixels_per_column;
-    OS1::lidar_mode mode = OS1::MODE_1024x10;
-    std::string metadata{};
-
-    std::string dir;
-    std::string path;
-    std::ofstream writeFile;
-
-    bool do_config = true;
-    int lidar_port = 0;
-    int imu_port = 0;
-    int count = 0;
-
-    void WritePCD(std::vector<double> xyz_lut, uint8_t* buf);
-
 public slots:
     void stop();
-    void get_dir(QString);
 private:
     void run() override;
 
 signals:
     void send_lidar(pcl::PointCloud<pcl::PointXYZ>::Ptr);
-    void connectedOK();
 };
 
 #endif // LIDARTHREAD_H

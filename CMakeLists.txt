@@ -107,8 +107,7 @@ target_include_directories(ouster_viz SYSTEM PRIVATE)
 
 #set(project_SOURCES main.cpp mainwindow.cpp camthread.cpp glwidget.cpp gpsthread.cpp lidarthread.cpp lidarvtkwidget.cpp)
 set(project_SOURCES main.cpp  canthread.cpp imuwidget.cpp  mainwindow.cpp camthread.cpp gpsthread.cpp 
-  lidarthread.cpp lidarvtkwidget.cpp  imuthread.cpp qcgaugewidget.cpp storingdb.cpp makejson.cpp 
-  readfiles.cpp indexandtimes.cpp)
+  lidarthread.cpp lidarvtkwidget.cpp  imuthread.cpp qcgaugewidget.cpp)
 #
 add_executable(${PROJECT_NAME} ${project_SOURCES} ${MSCL_INC_PATH} ${MSCL_LIB} ${MSCL_INC} ${PROTO_SRCS} ${PROTO_HDRS})
 

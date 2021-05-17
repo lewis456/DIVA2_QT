@@ -67,9 +67,7 @@
 #include "lidarvtkwidget.h"
 #include "canthread.h"
 #include "qcgaugewidget.h"
-#include "storingdb.h"
 #include "imuwidget.h"
-#include "makejson.h"
 
 #include "Timestamp.h"
 
@@ -139,7 +137,6 @@ public:
     QLabel *lArrowLabel;
     QLabel *rArrowLabel;
     void Make();
-    QString Check_Directory(QString Path);
     void Display_Scene(QString Text);
     void Setting_Frames(QString Text);
     void Display_Frame_Datas(QString Text);
@@ -164,14 +161,14 @@ private:
     class imuThread::imuThread *it;
     class lidarVTKWidget::lidarVTKWidget *lvw;
     class canThread::canThread *cant;
-    class storingDB::storingDB *sdb;
-    class MakeJson::MakeJson *mj;
 
     imuWidget *iw;
     Timestamp ts;
     QStorageInfo storage;
     double total, free, used;
     int percent;
+
+    QString selected_date;
 
 
 public slots:
@@ -194,10 +191,7 @@ private slots:
     void get_log_token();
     void on_pushButton_clicked();
 
-    void on_label_3_itemClicked(QListWidgetItem *item);
-
-    void on_actionDB_Storing_triggered();
-    void on_actionJSON_Parsing_triggered();
+    void on_Scene_list_itemClicked(QListWidgetItem *item);
 
     void on_horizontalSlider_sliderMoved(int position);
 

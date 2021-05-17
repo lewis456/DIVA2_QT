@@ -42,10 +42,5 @@ void imuThread::stop(){
 	stop_flag = true;
 }
 
-void imuThread::get_dir(QString dir_str){
-	dir = dir_str.toStdString();
-}
-
-
 // string msg_str(static_cast<char*>(msg.data()), msg.size());
 //         imu.ParseFromString(msg_str);

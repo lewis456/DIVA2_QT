@@ -30,16 +30,12 @@ public:
 
     int rows, cols;
     vector<uchar> data;
-    
-    string dir;
-    string path;
-    ofstream writeFile;
+
     vector<int> Compression_params;
     bool stop_flag = false;
 
 public slots:
     void stop();
-    void get_dir(QString);
 
 private:
     void run() override;

@@ -87,7 +87,7 @@ background-color: rgba(238, 238, 236, 180);</string>
      <string notr="true">background : rgb(114, 159, 207)</string>
     </property>
     <property name="text">
-     <string>Start Play</string>
+     <string>Select Date</string>
     </property>
    </widget>
    <widget class="QWidget" name="gridLayoutWidget">
@@ -573,13 +573,23 @@ border-radius: 5px;</string>
      <string/>
     </property>
    </widget>
-   <widget class="QListWidget" name="listWidget">
+   <widget class="QListWidget" name="Scene_list">
+    <property name="geometry">
+     <rect>
+      <x>1570</x>
+      <y>570</y>
+      <width>201</width>
+      <height>211</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QListWidget" name="Date_list">
     <property name="geometry">
      <rect>
       <x>1570</x>
       <y>470</y>
       <width>201</width>
-      <height>311</height>
+      <height>91</height>
      </rect>
     </property>
    </widget>
@@ -613,7 +623,8 @@ border-radius: 5px;</string>
    <zorder>signal1</zorder>
    <zorder>signal2</zorder>
    <zorder>signal3</zorder>
-   <zorder>listWidget</zorder>
+   <zorder>Scene_list</zorder>
+   <zorder>Date_list</zorder>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
@@ -641,21 +652,13 @@ color: rgba(103, 73, 203, 230);</string>
    </widget>
    <widget class="QMenu" name="menuPlayback">
     <property name="title">
-     <string/>
+     <string>PlayBack</string>
     </property>
     <addaction name="actionInitializing_2"/>
     <addaction name="actionGet_Log"/>
     <addaction name="actionFinish"/>
    </widget>
-   <widget class="QMenu" name="menuData_Processing">
-    <property name="title">
-     <string/>
-    </property>
-    <addaction name="actionJSON_Parsing"/>
-    <addaction name="actionDB_Storing"/>
-   </widget>
    <addaction name="menuStreaming"/>
-   <addaction name="menuData_Processing"/>
    <addaction name="menuPlayback"/>
   </widget>
   <action name="actionLive_Streaming">

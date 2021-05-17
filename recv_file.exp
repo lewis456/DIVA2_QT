@@ -1,0 +1,11 @@
+#!/usr/bin/expect
+#서버로부터 디렉토리 전송받음
+#expect -f recv_file.exp <dir path>
+
+set dir [lindex $argv 0]
+
+spawn rsync -avzhP ubuntu@13.125.216.169:~/$dir .
+expect -re "password"
+send "dudgh123\r"
+
+interact
