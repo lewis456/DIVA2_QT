@@ -1,5 +1,6 @@
 #include "canthread.h"
 #include <zmq.hpp>
+#include <sys/time.h>
 
 inline static std::string s_recv(zmq::socket_t & socket, int flags = 0) {
     zmq::message_t message;
@@ -18,6 +19,7 @@ void canThread::run(){
     can_sub.connect("tcp://127.0.0.1:5563");
     can_sub.setsockopt(ZMQ_SUBSCRIBE, "CAN", 3);
 
+    file.open("can_delay.csv");
     while(!stop_flag){
         sensors::Can can;
         string topic=s_recv(can_sub);
@@ -25,6 +27,11 @@ void canThread::run(){
         can_sub.recv(&msg);
 
         can.ParseFromArray(msg.data(), msg.size());
+
+        struct timeval tv;
+        gettimeofday(&tv, NULL);
+        double cur=1000000*tv.tv_sec + tv.tv_usec;
+        file<<cur-can.timestamp()<<",us\n";
 
         int data_type=can.type();
         switch (data_type){
@@ -46,5 +53,6 @@ void canThread::run(){
 
 void canThread::stop(){
 	stop_flag = true;
+    file.close();
     emit send_end();
 }

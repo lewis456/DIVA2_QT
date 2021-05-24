@@ -10,9 +10,12 @@
 #include <QCoreApplication>
 #include <string>
 #include <iostream>
+#include <fstream>
 #include <zmq.hpp>
 #include <google/protobuf/text_format.h>
 #include "sensors.pb.h"
+
+using namespace std;
 
 class gpsThread : public QThread
 {
@@ -24,6 +27,8 @@ public:
     double Convert_to_dd(double raw);
 
     double latitude=0, longitude=0, hdop=0;
+
+    ofstream file;
 
 public slots:
     void stop();

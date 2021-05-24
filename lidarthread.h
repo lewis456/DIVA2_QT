@@ -45,6 +45,7 @@
 #include <google/protobuf/text_format.h>
 #include "sensors.pb.h"
 #include <zmq.hpp>
+#include <fstream>
 
 #define os1_host  "os1-991904000944.local"
 #define os1_udp_dest   "10.5.5.1"
@@ -63,6 +64,8 @@ public:
 
     pcl::PointCloud<pcl::PointXYZ>::Ptr ptr_cloud; //생성할 PointCloud structure구조체(x,y,z) 정의
     pcl::PointCloud<pcl::PointXYZ> cloud;
+
+    ofstream file;
 
 public slots:
     void stop();

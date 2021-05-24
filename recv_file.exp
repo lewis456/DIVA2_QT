@@ -1,5 +1,5 @@
 #!/usr/bin/expect
-#서버로부터 디렉토리 전송받음
+#서버로부터 <dir path> 디렉토리를 현재 위치로 다운받음
 #expect -f recv_file.exp <dir path>
 
 set dir [lindex $argv 0]

@@ -23,7 +23,7 @@
       <x>1240</x>
       <y>340</y>
       <width>311</width>
-      <height>111</height>
+      <height>71</height>
      </rect>
     </property>
     <property name="styleSheet">
@@ -87,7 +87,7 @@ background-color: rgba(238, 238, 236, 180);</string>
      <string notr="true">background : rgb(114, 159, 207)</string>
     </property>
     <property name="text">
-     <string>Select Date</string>
+     <string>Download</string>
     </property>
    </widget>
    <widget class="QWidget" name="gridLayoutWidget">
@@ -105,9 +105,9 @@ background-color: rgba(238, 238, 236, 180);</string>
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>450</y>
+      <y>370</y>
       <width>621</width>
-      <height>421</height>
+      <height>501</height>
      </rect>
     </property>
     <layout class="QGridLayout" name="gridLayout_2"/>
@@ -116,7 +116,7 @@ background-color: rgba(238, 238, 236, 180);</string>
     <property name="geometry">
      <rect>
       <x>1240</x>
-      <y>470</y>
+      <y>430</y>
       <width>311</width>
       <height>261</height>
      </rect>
@@ -282,9 +282,9 @@ background-color: rgba(255, 255, 255,0);psql -h localhost -p 5432 -U diva -d &qu
     <property name="geometry">
      <rect>
       <x>1240</x>
-      <y>750</y>
+      <y>700</y>
       <width>311</width>
-      <height>71</height>
+      <height>121</height>
      </rect>
     </property>
     <property name="styleSheet">
@@ -511,7 +511,7 @@ color: rgb(98, 114, 164);</string>
       <x>10</x>
       <y>10</y>
       <width>621</width>
-      <height>431</height>
+      <height>349</height>
      </rect>
     </property>
     <property name="styleSheet">

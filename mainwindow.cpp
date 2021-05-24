@@ -76,11 +76,13 @@ void MainWindow::on_can_cb_stateChanged(int arg1){
 
 void MainWindow::display_gps_info(QString latitude, QString longitude,double hdop){
     //mpage->setView(mview);
-    string latlong = " lat : "+latitude.toStdString()+" lng : "+longitude.toStdString();
+    QString latlong="lat : "+latitude+" lng : "+longitude;
+    //string latlong = " lat : "+latitude.toStdString()+" lng : "+longitude.toStdString();
+    cout<<"signal lat="<<latitude.toStdString()<<" long= "<<longitude.toStdString();
 
     if(latitude != "0" && longitude != "0"){
-        gpsWidget2->setText(QString::fromLocal8Bit(latlong.c_str()));
-
+        //gpsWidget2->setText(QString::fromLocal8Bit(latlong.c_str()));
+        gpsWidget2->setText(latlong);
         if(wifi_use){
             mpage->runJavaScript(QString("addMarker(%1, %2);").arg(latitude).arg(longitude));  
                     if(gpscnt==0 || gpscnt%10 == 0){
@@ -95,36 +97,37 @@ void MainWindow::display_gps_info(QString latitude, QString longitude,double hdo
         mview->show();
     }
     mview->show();
-    gpscnt++;
+
     if(gpscnt%10==0){
-   if(hdop<=1){
-       ui->signal1->setStyleSheet("QLabel { background-color: rgb(115, 210, 22); "
+        if(hdop<=1){
+            ui->signal1->setStyleSheet("QLabel { background-color: rgb(115, 210, 22); "
                                             "border-radius: 5px;}");
-       ui->signal2->setStyleSheet("QLabel { background-color: rgb(115, 210, 22); "
+            ui->signal2->setStyleSheet("QLabel { background-color: rgb(115, 210, 22); "
                                             "border-radius: 5px;}");
-       ui->signal3->setStyleSheet("QLabel { background-color: rgb(115, 210, 22); "
+            ui->signal3->setStyleSheet("QLabel { background-color: rgb(115, 210, 22); "
                                             "border-radius: 5px;}");
-   }
-   else if(hdop<=5){
-       ui->signal1->setStyleSheet("QLabel { background-color: rgb(237, 212, 0); "
+        }
+        else if(hdop<=5){
+            ui->signal1->setStyleSheet("QLabel { background-color: rgb(237, 212, 0); "
                                             "border-radius: 5px;}");
-       ui->signal2->setStyleSheet("QLabel { background-color: rgb(237, 212, 0); "
+            ui->signal2->setStyleSheet("QLabel { background-color: rgb(237, 212, 0); "
                                             "border-radius: 5px;}");
-       ui->signal3->setStyleSheet("QLabel { background-color: rgb(255, 255, 255); "
+            ui->signal3->setStyleSheet("QLabel { background-color: rgb(255, 255, 255); "
                                             "border-radius: 5px;}");
-   }
-   else{
-       ui->signal1->setStyleSheet("QLabel { background-color: rgb(204, 0, 0); "
+        }
+        else{
+            ui->signal1->setStyleSheet("QLabel { background-color: rgb(204, 0, 0); "
                                             "border-radius: 5px;}");
-       ui->signal2->setStyleSheet("QLabel { background-color: rgb(255, 255, 255); "
+            ui->signal2->setStyleSheet("QLabel { background-color: rgb(255, 255, 255); "
                                             "border-radius: 5px;}");
-       ui->signal3->setStyleSheet("QLabel { background-color: rgb(255, 255, 255); "
+            ui->signal3->setStyleSheet("QLabel { background-color: rgb(255, 255, 255); "
                                             "border-radius: 5px;}");
-   }
-   ui->signal1->show();
-   ui->signal2->show();
-   ui->signal3->show();
+        }
+        ui->signal1->show();
+        ui->signal2->show();
+        ui->signal3->show();
     }
+    gpscnt++;
 }
 
 void MainWindow::gps_view_initialize(){
@@ -137,16 +140,18 @@ void MainWindow::gps_view_initialize(){
 }
 
 void MainWindow::display_cam(QImage image){
-    camWidget->setPixmap(QPixmap::fromImage(image).scaled(camWidget->width(),camWidget->height()-10, Qt::KeepAspectRatio));
+    camWidget->setPixmap(QPixmap::fromImage(image).scaled(camWidget->width(),camWidget->height(), Qt::KeepAspectRatio));
     camWidget->setAlignment(Qt::AlignCenter);
     camWidget->show();
     QCoreApplication::processEvents();
 }
 
 void MainWindow::display_handle_data(QString str){
-    str.prepend("Handle degree : ");
+    str.prepend("Handle degree\n");
+    //str.append("\n");
     // str.append("\nHandle acceleration : ");
     // str.append(str2);
+    //str.sprintf("%3d", str);
     ui->label_5->setText(str);
     ui->label_5->show();
     QCoreApplication::processEvents();
@@ -159,13 +164,13 @@ void MainWindow::speedChanged(float value){
 
 void MainWindow::display_gear(int gear){
     if(gear == 1){//P
-        redRectLabel->move(1356, 245); //p
+        redRectLabel->move(1306, 245);
     }else if(gear == 2){//R
-        redRectLabel->move(1406, 245); //R
+        redRectLabel->move(1356, 245);
     }else if(gear == 3){//N
-        redRectLabel->move(1456, 245); //N
+        redRectLabel->move(1406, 245);
     }else if(gear == 4){//D
-        redRectLabel->move(1506, 245); //D
+        redRectLabel->move(1456, 245);
     }else{
         return;
     }
@@ -178,7 +183,7 @@ void MainWindow::display_turn_indicator(int turn){
         rArrowLabel->hide();
     }else if(turn == 2){//right
         rArrowLabel->show();
-        lArrowLabel->show();
+        lArrowLabel->hide();
     }else if(turn == 0){//none
         lArrowLabel->hide();
         rArrowLabel->hide();
@@ -235,7 +240,7 @@ void MainWindow::Make(){
     mview->setGeometry(650, 30, 580, 810);
     //mview->setAttribute(Qt::WA_TranslucentBackground);
     mview->setStyleSheet("background:transparent;");
-    mpage->setUrl(QUrl("http://localhost:8080/map_display2.html"));
+    mpage->setUrl(QUrl("http://localhost:8080/map.html"));
     mpage->setBackgroundColor(Qt::transparent);
     mpage->setView(mview);
 
@@ -350,7 +355,7 @@ void MainWindow::start_can_streaming(){
 }  
 
 void MainWindow::initial_map(){
-    mpage->setUrl(QUrl("http://localhost:8080/map_display2.html"));
+    mpage->setUrl(QUrl("http://localhost:8080/map.html"));
     //mpage->setView(mview);
 }
 
@@ -445,29 +450,30 @@ QString *saved_token_for_cnt_frames;
 
 //어떤 날짜에 데이터가 저장되어있는지 보고 해당 날짜의 CAM과 Lidar데이터 다운
 void MainWindow::on_pushButton_clicked(){
-     cout<<"on_push_start"<<endl;
-     if(this_is_get_log){
-         int log_row = ui->Date_list->currentRow();
-         CurrentLog current_log = logs.at(log_row);
-         QString log_str = "Date : ";
-         log_str.append(current_log.d);
-         selected_date=current_log.d;
-         ui->label_7->setText(log_str);
-         this_is_get_log = false;
-         this->Display_Scene(current_log.t);
-         ui->pushButton->setText("Play");
-         //해당 날짜 데이터 다운받는 expect script실행
-         string command="expect -f ../recv_file.exp " ;
-         command.append(get_current_dir_name());
-         command.append(selected_date.toStdString());
-         int ret=system(command.c_str());
-     }else{
-         int item_row =  ui->Scene_list->currentRow();
-          QString fftoken=scenes_ftoken.at(item_row);
-          nbr_frames = scenes_nbrframes.at(item_row);
-         counted_frames = 0;
-         this->Setting_Frames(fftoken);
-     }
+    cout<<"push button  clicked!!\n";
+//    cout<<"on_push_start"<<endl;
+//    if(this_is_get_log){
+//       int log_row = ui->Date_list->currentRow();
+//       CurrentLog current_log = logs.at(log_row);
+//       QString log_str = "Date : ";
+//       log_str.append(current_log.d);
+//       ui->label_7->setText(log_str);
+//       selected_date=current_log.d;
+//       this_is_get_log = false;
+//       this->Display_Scene(current_log.t);
+//       //해당 날짜 데이터 다운받는 expect script실행
+//       string command="expect -f ../recv_file.exp " ;
+//       command.append(selected_date.toStdString());
+//       int ret=system(command.c_str());
+       
+//       ui->pushButton->setText("Play");
+//    }else{
+//       int item_row =  ui->Scene_list->currentRow();
+//       QString fftoken=scenes_ftoken.at(item_row);
+//       nbr_frames = scenes_nbrframes.at(item_row);
+//       counted_frames = 0;
+//       this->Setting_Frames(fftoken);
+//    }
 }
 
 
@@ -524,14 +530,13 @@ void MainWindow::Setting_Frames(QString Text){
 //나머지는 튜플에 저장된 센서값 사용
 void MainWindow::Display_Frame_Datas(QString Text){
     //저장된 폴더 경로
-    //build/YYYY-MM-DD/CAM
+    //build/YYYY-MM-DD/
     QString cur_dir="./";
     cur_dir.append(selected_date);
-    cur_dir.append("/");
     
-    QString pcd_dir=cur_dir+"LIDAR/";
+    QString pcd_dir=cur_dir+"/LIDAR/";
 
-    QString cam_dir=cur_dir + "CAM/";
+    QString cam_dir=cur_dir + "/CAM/";
 
     cout<<"display_frame_datas start"<<endl;
     QString idx_file_format;
@@ -573,6 +578,7 @@ void MainWindow::Display_Gps_Data(QString Text){
     cout<<"display gps data start"<<endl;
     QString idx_lat;
     QString idx_lng;
+    double idx_hdop;
     QString idx_token;
 
     this->gps_from_db = new QSqlQuery(this->database);
@@ -583,18 +589,19 @@ void MainWindow::Display_Gps_Data(QString Text){
     this->gps_from_db->first();
     idx_lat = this->gps_from_db->value(1).toString();
     idx_lng =this->gps_from_db->value(2).toString();
+    idx_hdop=this->gps_from_db->value(3).toDouble();
 
-    double tmp=0;
-    this->display_gps_info(idx_lat, idx_lng, tmp);
+    this->display_gps_info(idx_lat, idx_lng, idx_hdop);
     QCoreApplication::processEvents();
     cout<<"display gps data end"<<endl;
 }
 
 void MainWindow::Display_Imu_Data(QString Text){
     cout<<"display imu data start"<<endl;
-    QString idx_ax;
-    QString idx_ay;
-    QString idx_az;
+//    QString idx_ax;
+//    QString idx_ay;
+//    QString idx_az;
+    float idx_ax, idx_ay, idx_az;
 
     this->imu_from_db = new QSqlQuery(this->database);
     QString selectq = "SELECT * FROM IMU_DATA WHERE token = '";
@@ -603,11 +610,15 @@ void MainWindow::Display_Imu_Data(QString Text){
     this->imu_from_db -> exec(selectq);
 
     this->imu_from_db->first();
-    idx_ax = this->imu_from_db->value(4).toString();
-    idx_ay =this->imu_from_db->value(5).toString();
-    idx_az =this->imu_from_db->value(6).toString();
+    idx_ax=this->imu_from_db->value(1).toFloat();
+    idx_ay=this->imu_from_db->value(2).toFloat();
+    idx_az=this->imu_from_db->value(3).toFloat();
+    emit send_imu(idx_ax, idx_ay, idx_az);
+//    idx_ax = this->imu_from_db->value(1).toString();
+//    idx_ay =this->imu_from_db->value(2).toString();
+//    idx_az =this->imu_from_db->value(3).toString();
     
-    emit send_imu(idx_ax.toFloat(), idx_ay.toFloat(), idx_az.toFloat());
+//    emit send_imu(idx_ax.toFloat(), idx_ay.toFloat(), idx_az.toFloat());
     QCoreApplication::processEvents();   
     cout<<"display imu data end"<<endl;
 }
@@ -627,9 +638,9 @@ void MainWindow::Display_Can_Data(QString Text){
 
     this->can_from_db->first();
     handle = this->can_from_db->value(1).toString();
-    speed =this->can_from_db->value(3).toString(); //speed 
-    gear=this->can_from_db->value(4).toString();
-    turn=this->can_from_db->value(5).toString();
+    speed =this->can_from_db->value(2).toString();
+    gear=this->can_from_db->value(3).toString();
+    turn=this->can_from_db->value(4).toString();
     
     this->display_handle_data(handle);
     this->display_gear(gear.toInt());
@@ -704,17 +715,18 @@ void MainWindow::display_imu_xyz(float x, float y, float z){
     QString zs=QString::number(z);
     QString str;
     xs.prepend("Acceleration\nX: ");
-    ys.prepend("G  /  Y: ");
-    zs.prepend("G  /  Z: ");
+    ys.prepend("G\nY: ");
+    zs.prepend("G\nZ: ");
     str=xs+ys+zs+"G";
     ui->label_8->setText(str);
     QCoreApplication::processEvents();
 }
 
 void MainWindow::sensing_start(){
-    int ret=system("/home/yh/real/diva2/build/MobilePlatform/Sensing/MP_sensing &");
+    system("/home/yh/real/diva2/build/MobilePlatform/Sensing/MP_sensing &");
 }
 
 void MainWindow::sensing_stop(){
-    int ret=system("pkill -ef MP_sensing");
+    system("pkill -ef MP_sensing");
+    system("expect -f ../send_file.exp 파일경로");
 }

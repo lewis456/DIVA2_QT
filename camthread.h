@@ -12,6 +12,7 @@
 #include "opencv2/imgproc/imgproc.hpp"
 #include "opencv2/highgui/highgui.hpp"
 #include <opencv2/imgcodecs.hpp>
+#include <fstream>
 
 #include "Timestamp.h"
 #include "sensors.pb.h"
@@ -33,6 +34,8 @@ public:
 
     vector<int> Compression_params;
     bool stop_flag = false;
+
+    ofstream file;
 
 public slots:
     void stop();

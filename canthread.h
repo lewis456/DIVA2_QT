@@ -11,7 +11,7 @@
 
 #include <iostream>
 #include <cstring>
-
+#include <fstream>
 
 #include "Timestamp.h"
 #include <google/protobuf/text_format.h>
@@ -37,6 +37,8 @@ public:
     canThread(QObject *parent = 0);
 
     bool stop_flag = false;
+
+    ofstream file;
 
 signals:
 	void send_speed(float);

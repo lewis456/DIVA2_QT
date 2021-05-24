@@ -1,5 +1,6 @@
 #include "gpsthread.h"
 #include <zmq.hpp>
+#include <sys/time.h>
 // struct termios stOldState;
 // struct termios stNewState;
 
@@ -22,31 +23,38 @@ void gpsThread::run() {
     gps_sub.connect("tcp://127.0.0.1:5563");
     gps_sub.setsockopt(ZMQ_SUBSCRIBE, "GPS", 3);
 
-    std::cout << "GPS streaming_start" << std::endl;
+    file.open("gps_delay.csv");
     while (!stop_flag) {
         string topic = s_recv(gps_sub);
         sensors::Gps gps;
         zmq::message_t msg;
         gps_sub.recv(&msg);
-
         //protobuf parsing
         gps.ParseFromArray(msg.data(), msg.size());
         latitude = gps.latitude();
         longitude = gps.longitude();
         hdop=gps.horizontaldilutionofprecision();
-        cout<<gps.latitude()<<" "<<gps.longitude()<<endl;
+        //cout<<gps.latitude()<<" "<<gps.longitude()<<endl;
 
+        struct timeval tv;
+        gettimeofday(&tv, NULL);
+        double cur=1000000*tv.tv_sec + tv.tv_usec;
+        file<<cur-gps.timestamp()<<",us\n";
+
+        printf("lat=%lf long=%lf\n", Convert_to_dd(latitude), Convert_to_dd(longitude));
         emit send_ll(
-            QString::number(Convert_to_dd(latitude)),
-            QString::number(Convert_to_dd(longitude)),
+            QString::number(Convert_to_dd(latitude), 'g', 9),
+            QString::number(Convert_to_dd(longitude), 'g', 9),
             hdop
         );
+
     }
 }
 
 void gpsThread::stop(){
     stop_flag = true;
     emit send_end();
+    file.close();
 }
 
 double gpsThread::Convert_to_dd(double raw){

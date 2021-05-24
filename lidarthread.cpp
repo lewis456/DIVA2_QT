@@ -1,4 +1,5 @@
 #include "lidarthread.h"
+#include <sys/time.h>
 
 inline static std::string s_recv(zmq::socket_t & socket, int flags = 0) {
     zmq::message_t message;
@@ -18,12 +19,15 @@ void lidarThread::run(){
     lidar_sub.connect("tcp://127.0.0.1:5563");
     lidar_sub.setsockopt(ZMQ_SUBSCRIBE, "LIDAR", 5);
 
+    file.open("lidar_delay.csv");
+
     while(!stop_flag){
         sensors::Lidar lidar;
         string topic=s_recv(lidar_sub);
         zmq::message_t msg;
         lidar_sub.recv(&msg);
 
+        std::cout<<"recived!!\n";
         lidar.ParseFromArray(msg.data(), msg.size());
         int size=(int)lidar.size();
         cloud.resize(size);
@@ -34,6 +38,12 @@ void lidarThread::run(){
             point.z = lidar.data(i).z();
             i++;
         }
+
+        struct timeval tv;
+        gettimeofday(&tv, NULL);
+        double cur=1000000*tv.tv_sec + tv.tv_usec;
+        file<<cur-lidar.timestamp()<<",us\n";
+
         *ptr_cloud=cloud;
         emit send_lidar(ptr_cloud);
         }
@@ -41,4 +51,5 @@ void lidarThread::run(){
 }
 void lidarThread::stop(){
     stop_flag = true;
+    file.close();
 }

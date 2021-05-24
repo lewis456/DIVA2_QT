@@ -1,6 +1,8 @@
 #include "camthread.h"
 #include <zmq.hpp>
 #include <time.h>
+#include <sys/time.h>
+#include <iomanip>
 
 inline static std::string s_recv(zmq::socket_t & socket, int flags = 0) {
     zmq::message_t message;
@@ -23,6 +25,8 @@ void camThread::run(){
     if( !cap.isOpened() )
           QThread::msleep(10);
 
+
+    file.open("cam_delay.csv");
     while(!stop_flag){
         struct timespec begin, end;
         double tmp=0.0;
@@ -44,6 +48,13 @@ void camThread::run(){
         //protobuf parsing
         cam.ParseFromArray(msg.data(), msg.size());
 
+        struct timeval tv;
+        gettimeofday(&tv, NULL);
+        double cur=1000000*tv.tv_sec + tv.tv_usec;
+        cout<<"delay="<<cur-cam.timestamp()<<endl;
+
+        file<<cur-cam.timestamp()<<",us\n";
+
         frame.create(cam.rows(), cam.cols(), CV_8UC3);
         std::cout<<"rows:"<<cam.rows()<<"/cols:"<<cam.cols()<<std::endl;
          memcpy((void*)frame.data, (void*)(&cam.image_data()[0]), frame.step[0]*(size_t)frame.rows);
@@ -59,6 +70,7 @@ void camThread::run(){
 }
 void camThread::stop(){
     stop_flag = true;
+    file.close();
 }
  // int rows, cols, type;
             // cv::Mat img;

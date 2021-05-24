@@ -11,6 +11,7 @@
 #include <QCoreApplication>
 #include <string>
 #include <iostream>
+#include <fstream>
 
 #include "mscl/mscl.h"
 #include "Timestamp.h"
@@ -27,6 +28,8 @@ public:
     float accel_x = 0.1;
 	float accel_y = 0.1;
 	float accel_z = 0.1;
+
+	ofstream file;
 
 private slots:
     void stop();
