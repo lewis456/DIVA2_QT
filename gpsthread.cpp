@@ -41,7 +41,7 @@ void gpsThread::run() {
         double cur=1000000*tv.tv_sec + tv.tv_usec;
         file<<cur-gps.timestamp()<<",us\n";
 
-        printf("lat=%lf long=%lf\n", Convert_to_dd(latitude), Convert_to_dd(longitude));
+        //printf("lat=%lf long=%lf\n", Convert_to_dd(latitude), Convert_to_dd(longitude));
         emit send_ll(
             QString::number(Convert_to_dd(latitude), 'g', 9),
             QString::number(Convert_to_dd(longitude), 'g', 9),
@@ -53,8 +53,8 @@ void gpsThread::run() {
 
 void gpsThread::stop(){
     stop_flag = true;
-    emit send_end();
     file.close();
+    //emit send_end();
 }
 
 double gpsThread::Convert_to_dd(double raw){

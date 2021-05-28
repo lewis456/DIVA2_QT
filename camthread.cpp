@@ -51,8 +51,6 @@ void camThread::run(){
         struct timeval tv;
         gettimeofday(&tv, NULL);
         double cur=1000000*tv.tv_sec + tv.tv_usec;
-        cout<<"delay="<<cur-cam.timestamp()<<endl;
-
         file<<cur-cam.timestamp()<<",us\n";
 
         frame.create(cam.rows(), cam.cols(), CV_8UC3);
@@ -60,7 +58,7 @@ void camThread::run(){
          memcpy((void*)frame.data, (void*)(&cam.image_data()[0]), frame.step[0]*(size_t)frame.rows);
 
          cv::cvtColor(frame, frame, cv::COLOR_BGR2RGB);
-         flip(frame, frame, 1);
+         //flip(frame, frame, 1);
 
          QImage image(frame.size().width, frame.size().height, QImage::Format_RGB888);
          memcpy(image.scanLine(0), frame.data, static_cast<size_t>(image.width() * image.height() * frame.channels()));

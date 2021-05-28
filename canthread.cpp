@@ -54,5 +54,5 @@ void canThread::run(){
 void canThread::stop(){
 	stop_flag = true;
     file.close();
-    emit send_end();
+    //emit send_end();
 }

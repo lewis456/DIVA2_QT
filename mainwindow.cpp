@@ -19,9 +19,9 @@ MainWindow::MainWindow(QWidget *parent)
     qRegisterMetaType<pcl::PointCloud<pcl::PointXYZ>::Ptr >("pcl::PointCloud<pcl::PointXYZ>::Ptr");
     gpscnt = 0;
     connect(ui->actionInitializing, SIGNAL(triggered()), this, SLOT(Initializing_for_Live()));  
-    //connect(ui->actionLive_Streaming, SIGNAL(triggered()), this, SLOT(sensing_start()));
+    connect(ui->actionLive_Streaming, SIGNAL(triggered()), this, SLOT(sensing_start()));
     connect(ui->actionInitializing_2, SIGNAL(triggered()), this, SLOT(Initializing_for_Playback()));  
-    //connect(ui->actionStreaming_End, SIGNAL(triggered()), this, SLOT(sensing_stop()));
+    connect(ui->actionStreaming_End, SIGNAL(triggered()), this, SLOT(sensing_stop()));
 }
 
 MainWindow::~MainWindow()
@@ -399,7 +399,7 @@ void MainWindow::get_log_token(){
             current_log.v = this->log_from_db->value(2).toString();
             current_log.d =  this->log_from_db->value(1).toString();
             logs.push_back(current_log);
-            ui->Scene_list->addItem(current_log.d);
+            ui->Date_list->addItem(current_log.d);
         }else break;
     }
     cout<<"get_log_token end"<<endl;
@@ -450,30 +450,29 @@ QString *saved_token_for_cnt_frames;
 
 //어떤 날짜에 데이터가 저장되어있는지 보고 해당 날짜의 CAM과 Lidar데이터 다운
 void MainWindow::on_pushButton_clicked(){
-    cout<<"push button  clicked!!\n";
-//    cout<<"on_push_start"<<endl;
-//    if(this_is_get_log){
-//       int log_row = ui->Date_list->currentRow();
-//       CurrentLog current_log = logs.at(log_row);
-//       QString log_str = "Date : ";
-//       log_str.append(current_log.d);
-//       ui->label_7->setText(log_str);
-//       selected_date=current_log.d;
-//       this_is_get_log = false;
-//       this->Display_Scene(current_log.t);
-//       //해당 날짜 데이터 다운받는 expect script실행
-//       string command="expect -f ../recv_file.exp " ;
-//       command.append(selected_date.toStdString());
-//       int ret=system(command.c_str());
+   cout<<"on_push_start"<<endl;
+   if(this_is_get_log){
+      int log_row = ui->Date_list->currentRow();
+      CurrentLog current_log = logs.at(log_row);
+      QString log_str = "Date : ";
+      log_str.append(current_log.d);
+      ui->label_7->setText(log_str);
+      selected_date=current_log.d;
+      this_is_get_log = false;
+      this->Display_Scene(current_log.t);
+      //해당 날짜 데이터 다운받는 expect script실행
+      string command="expect -f ../recv_file.exp " ;
+      command.append(selected_date.toStdString());
+      int ret=system(command.c_str());
        
-//       ui->pushButton->setText("Play");
-//    }else{
-//       int item_row =  ui->Scene_list->currentRow();
-//       QString fftoken=scenes_ftoken.at(item_row);
-//       nbr_frames = scenes_nbrframes.at(item_row);
-//       counted_frames = 0;
-//       this->Setting_Frames(fftoken);
-//    }
+      ui->pushButton->setText("Play");
+   }else{
+      int item_row =  ui->Scene_list->currentRow();
+      QString fftoken=scenes_ftoken.at(item_row);
+      nbr_frames = scenes_nbrframes.at(item_row);
+      counted_frames = 0;
+      this->Setting_Frames(fftoken);
+   }
 }
 
 
@@ -728,5 +727,5 @@ void MainWindow::sensing_start(){
 
 void MainWindow::sensing_stop(){
     system("pkill -ef MP_sensing");
-    system("expect -f ../send_file.exp 파일경로");
+    //system("expect -f ../send_file.exp 파일경로");
 }
