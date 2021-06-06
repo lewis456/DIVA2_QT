@@ -21,9 +21,9 @@
     <property name="geometry">
      <rect>
       <x>1240</x>
-      <y>340</y>
+      <y>760</y>
       <width>311</width>
-      <height>71</height>
+      <height>61</height>
      </rect>
     </property>
     <property name="styleSheet">
@@ -31,7 +31,7 @@
 </string>
     </property>
     <property name="text">
-     <string>Handle Data</string>
+     <string>Steering Wheel Degree</string>
     </property>
     <property name="alignment">
      <set>Qt::AlignCenter</set>
@@ -41,7 +41,7 @@
     <property name="geometry">
      <rect>
       <x>1570</x>
-      <y>20</y>
+      <y>180</y>
       <width>201</width>
       <height>41</height>
      </rect>
@@ -94,7 +94,7 @@ background-color: rgba(238, 238, 236, 180);</string>
     <property name="geometry">
      <rect>
       <x>1240</x>
-      <y>10</y>
+      <y>430</y>
       <width>311</width>
       <height>201</height>
      </rect>
@@ -110,24 +110,17 @@ background-color: rgba(238, 238, 236, 180);</string>
       <height>501</height>
      </rect>
     </property>
-    <layout class="QGridLayout" name="gridLayout_2"/>
-   </widget>
-   <widget class="QWidget" name="gridLayoutWidget_3">
-    <property name="geometry">
-     <rect>
-      <x>1240</x>
-      <y>430</y>
-      <width>311</width>
-      <height>261</height>
-     </rect>
-    </property>
-    <layout class="QGridLayout" name="gridLayout_3"/>
+    <layout class="QGridLayout" name="gridLayout_2">
+     <item row="0" column="0">
+      <layout class="QGridLayout" name="gridLayout_3"/>
+     </item>
+    </layout>
    </widget>
    <widget class="QLabel" name="P_label">
     <property name="geometry">
      <rect>
       <x>1300</x>
-      <y>220</y>
+      <y>640</y>
       <width>50</width>
       <height>40</height>
      </rect>
@@ -148,7 +141,7 @@ background-color: rgba(255, 255, 255,0);psql -h localhost -p 5432 -U diva -d &qu
     <property name="geometry">
      <rect>
       <x>1350</x>
-      <y>220</y>
+      <y>640</y>
       <width>50</width>
       <height>40</height>
      </rect>
@@ -169,7 +162,7 @@ background-color: rgba(255, 255, 255,0);psql -h localhost -p 5432 -U diva -d &qu
     <property name="geometry">
      <rect>
       <x>1400</x>
-      <y>220</y>
+      <y>640</y>
       <width>50</width>
       <height>40</height>
      </rect>
@@ -190,7 +183,7 @@ background-color: rgba(255, 255, 255,0);psql -h localhost -p 5432 -U diva -d &qu
     <property name="geometry">
      <rect>
       <x>1450</x>
-      <y>220</y>
+      <y>640</y>
       <width>50</width>
       <height>40</height>
      </rect>
@@ -211,7 +204,7 @@ background-color: rgba(255, 255, 255,0);psql -h localhost -p 5432 -U diva -d &qu
     <property name="geometry">
      <rect>
       <x>1420</x>
-      <y>260</y>
+      <y>680</y>
       <width>80</width>
       <height>80</height>
      </rect>
@@ -230,7 +223,7 @@ background-color: rgba(255, 255, 255,0);psql -h localhost -p 5432 -U diva -d &qu
     <property name="geometry">
      <rect>
       <x>1300</x>
-      <y>260</y>
+      <y>680</y>
       <width>80</width>
       <height>80</height>
      </rect>
@@ -248,8 +241,8 @@ background-color: rgba(255, 255, 255,0);psql -h localhost -p 5432 -U diva -d &qu
    <widget class="QLabel" name="total">
     <property name="geometry">
      <rect>
-      <x>1580</x>
-      <y>100</y>
+      <x>1250</x>
+      <y>40</y>
       <width>181</width>
       <height>32</height>
      </rect>
@@ -264,8 +257,8 @@ background-color: rgba(255, 255, 255,0);psql -h localhost -p 5432 -U diva -d &qu
    <widget class="QLabel" name="usage">
     <property name="geometry">
      <rect>
-      <x>1580</x>
-      <y>130</y>
+      <x>1250</x>
+      <y>80</y>
       <width>181</width>
       <height>31</height>
      </rect>
@@ -282,9 +275,9 @@ background-color: rgba(255, 255, 255,0);psql -h localhost -p 5432 -U diva -d &qu
     <property name="geometry">
      <rect>
       <x>1240</x>
-      <y>700</y>
+      <y>180</y>
       <width>311</width>
-      <height>121</height>
+      <height>41</height>
      </rect>
     </property>
     <property name="styleSheet">
@@ -301,10 +294,10 @@ background-color: rgba(255, 255, 255,0);psql -h localhost -p 5432 -U diva -d &qu
    <widget class="QLabel" name="label_6">
     <property name="geometry">
      <rect>
-      <x>1570</x>
-      <y>230</y>
-      <width>201</width>
-      <height>221</height>
+      <x>1450</x>
+      <y>10</y>
+      <width>101</width>
+      <height>161</height>
      </rect>
     </property>
     <property name="styleSheet">
@@ -321,10 +314,10 @@ background-color: rgba(255, 255, 255,0);psql -h localhost -p 5432 -U diva -d &qu
    <widget class="QLabel" name="label_9">
     <property name="geometry">
      <rect>
-      <x>1570</x>
-      <y>80</y>
+      <x>1240</x>
+      <y>10</y>
       <width>201</width>
-      <height>131</height>
+      <height>161</height>
      </rect>
     </property>
     <property name="styleSheet">
@@ -338,35 +331,11 @@ color: rgb(98, 114, 164);</string>
      <set>Qt::AlignCenter</set>
     </property>
    </widget>
-   <widget class="QLabel" name="label_4">
-    <property name="geometry">
-     <rect>
-      <x>1620</x>
-      <y>220</y>
-      <width>111</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>12</pointsize>
-     </font>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">background-color: rgba(255,255,255,0);</string>
-    </property>
-    <property name="text">
-     <string>Data Setting</string>
-    </property>
-    <property name="alignment">
-     <set>Qt::AlignCenter</set>
-    </property>
-   </widget>
    <widget class="QLabel" name="label_10">
     <property name="geometry">
      <rect>
-      <x>1620</x>
-      <y>70</y>
+      <x>1290</x>
+      <y>10</y>
       <width>111</width>
       <height>20</height>
      </rect>
@@ -389,8 +358,8 @@ color: rgb(98, 114, 164);</string>
    <widget class="QProgressBar" name="progressBar">
     <property name="geometry">
      <rect>
-      <x>1580</x>
-      <y>170</y>
+      <x>1250</x>
+      <y>120</y>
       <width>181</width>
       <height>31</height>
      </rect>
@@ -413,8 +382,8 @@ color: rgb(98, 114, 164);</string>
    <widget class="QCheckBox" name="gps_cb">
     <property name="geometry">
      <rect>
-      <x>1591</x>
-      <y>257</y>
+      <x>1460</x>
+      <y>20</y>
       <width>51</width>
       <height>23</height>
      </rect>
@@ -432,8 +401,8 @@ color: rgb(98, 114, 164);</string>
    <widget class="QCheckBox" name="imu_cb">
     <property name="geometry">
      <rect>
-      <x>1591</x>
-      <y>292</y>
+      <x>1460</x>
+      <y>80</y>
       <width>53</width>
       <height>23</height>
      </rect>
@@ -451,8 +420,8 @@ color: rgb(98, 114, 164);</string>
    <widget class="QCheckBox" name="can_cb">
     <property name="geometry">
      <rect>
-      <x>1591</x>
-      <y>327</y>
+      <x>1460</x>
+      <y>140</y>
       <width>56</width>
       <height>23</height>
      </rect>
@@ -470,8 +439,8 @@ color: rgb(98, 114, 164);</string>
    <widget class="QCheckBox" name="cam_cb">
     <property name="geometry">
      <rect>
-      <x>1591</x>
-      <y>362</y>
+      <x>1460</x>
+      <y>50</y>
       <width>58</width>
       <height>23</height>
      </rect>
@@ -489,8 +458,8 @@ color: rgb(98, 114, 164);</string>
    <widget class="QCheckBox" name="lidar_cb">
     <property name="geometry">
      <rect>
-      <x>1591</x>
-      <y>397</y>
+      <x>1460</x>
+      <y>110</y>
       <width>68</width>
       <height>23</height>
      </rect>
@@ -577,9 +546,9 @@ border-radius: 5px;</string>
     <property name="geometry">
      <rect>
       <x>1570</x>
-      <y>570</y>
+      <y>540</y>
       <width>201</width>
-      <height>211</height>
+      <height>241</height>
      </rect>
     </property>
    </widget>
@@ -587,10 +556,39 @@ border-radius: 5px;</string>
     <property name="geometry">
      <rect>
       <x>1570</x>
-      <y>470</y>
+      <y>430</y>
       <width>201</width>
-      <height>91</height>
+      <height>101</height>
      </rect>
+    </property>
+   </widget>
+   <widget class="QCustomPlot" name="plot" native="true">
+    <property name="geometry">
+     <rect>
+      <x>1240</x>
+      <y>230</y>
+      <width>531</width>
+      <height>191</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgba(255,255,255,80);</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="logo">
+    <property name="geometry">
+     <rect>
+      <x>1570</x>
+      <y>10</y>
+      <width>201</width>
+      <height>161</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgba(255,255,255,80);</string>
+    </property>
+    <property name="text">
+     <string/>
     </property>
    </widget>
    <zorder>label_6</zorder>
@@ -606,7 +604,6 @@ border-radius: 5px;</string>
    <zorder>pushButton</zorder>
    <zorder>gridLayoutWidget</zorder>
    <zorder>gridLayoutWidget_2</zorder>
-   <zorder>gridLayoutWidget_3</zorder>
    <zorder>P_label</zorder>
    <zorder>R_label</zorder>
    <zorder>N_label</zorder>
@@ -616,7 +613,6 @@ border-radius: 5px;</string>
    <zorder>total</zorder>
    <zorder>usage</zorder>
    <zorder>label_8</zorder>
-   <zorder>label_4</zorder>
    <zorder>label_10</zorder>
    <zorder>progressBar</zorder>
    <zorder>Cam</zorder>
@@ -625,6 +621,8 @@ border-radius: 5px;</string>
    <zorder>signal3</zorder>
    <zorder>Scene_list</zorder>
    <zorder>Date_list</zorder>
+   <zorder>plot</zorder>
+   <zorder>logo</zorder>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
@@ -717,6 +715,14 @@ color: rgba(103, 73, 203, 230);</string>
    </property>
   </action>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>QCustomPlot</class>
+   <extends>QWidget</extends>
+   <header>qcustomplot.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

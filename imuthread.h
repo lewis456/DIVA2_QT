@@ -31,14 +31,15 @@ public:
 
 	ofstream file;
 
+	float my_round(float);
+
 private slots:
     void stop();
 
 private:
 	void run() override;
 signals : 
-	void send_acc(float, float, float);
-    
+    void send_acc(float, float, float);
 
 };
 

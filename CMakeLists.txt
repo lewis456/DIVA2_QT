@@ -26,7 +26,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 #set( CMAKE_PREFIX_PATH ${QTDIR} )
 find_package(Qt5 REQUIRED Widgets Gui)
 ADD_DEFINITIONS (${QT_DEFINITIONS})
-find_package(Qt5 REQUIRED COMPONENTS Core Gui Sql X11Extras OpenGL Network PrintSupport WebEngineWidgets SerialPort SerialBus)
+find_package(Qt5 REQUIRED COMPONENTS Core Gui Sql X11Extras OpenGL Network PrintSupport WebEngineWidgets SerialPort SerialBus Charts)
 find_package(Protobuf REQUIRED)
 
 find_package(Threads)
@@ -107,7 +107,7 @@ target_include_directories(ouster_viz SYSTEM PRIVATE)
 
 #set(project_SOURCES main.cpp mainwindow.cpp camthread.cpp glwidget.cpp gpsthread.cpp lidarthread.cpp lidarvtkwidget.cpp)
 set(project_SOURCES main.cpp  canthread.cpp imuwidget.cpp  mainwindow.cpp camthread.cpp gpsthread.cpp 
-  lidarthread.cpp lidarvtkwidget.cpp  imuthread.cpp qcgaugewidget.cpp)
+  lidarthread.cpp lidarvtkwidget.cpp  imuthread.cpp qcgaugewidget.cpp qcustomplot.cpp)
 #
 add_executable(${PROJECT_NAME} ${project_SOURCES} ${MSCL_INC_PATH} ${MSCL_LIB} ${MSCL_INC} ${PROTO_SRCS} ${PROTO_HDRS})
 
@@ -122,7 +122,7 @@ ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} ${CMAKE_THREAD_LIBS_INIT} ${PROTOBUF_LIBRARI
         Qt5::WebEngineWidgets
         Qt5::SerialBus
 	     Qt5::OpenGL
-
+		Qt5::Charts
 	/usr/share/c++-mscl/libmscl.so
 	GL
 	GLU

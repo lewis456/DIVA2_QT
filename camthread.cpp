@@ -20,7 +20,7 @@ void camThread::run(){
     std::cout<<"CAM Streaming_start"<<std::endl;
     zmq::context_t ctx(1);
      zmq::socket_t cam_sub( ctx, ZMQ_SUB);
-    cam_sub.connect("tcp://127.0.0.1:5563");
+    cam_sub.connect("tcp://165.246.39.124:5564");
     cam_sub.setsockopt(ZMQ_SUBSCRIBE, "CAM", 3);
     if( !cap.isOpened() )
           QThread::msleep(10);
@@ -53,9 +53,14 @@ void camThread::run(){
         double cur=1000000*tv.tv_sec + tv.tv_usec;
         file<<cur-cam.timestamp()<<",us\n";
 
-        frame.create(cam.rows(), cam.cols(), CV_8UC3);
-        std::cout<<"rows:"<<cam.rows()<<"/cols:"<<cam.cols()<<std::endl;
-         memcpy((void*)frame.data, (void*)(&cam.image_data()[0]), frame.step[0]*(size_t)frame.rows);
+
+        vector<uchar> data(cam.image_data().begin(), cam.image_data().end());
+        frame=cv::imdecode(data, cv::IMREAD_COLOR);
+
+
+        //frame.create(cam.rows(), cam.cols(), CV_8UC3);
+        // std::cout<<"rows:"<<cam.rows()<<"/cols:"<<cam.cols()<<std::endl;
+        //  memcpy((void*)frame.data, (void*)(&cam.image_data()[0]), frame.step[0]*(size_t)frame.rows);
 
          cv::cvtColor(frame, frame, cv::COLOR_BGR2RGB);
          //flip(frame, frame, 1);

@@ -1,6 +1,8 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+#include <mutex>
+
 bool wifi_use = true;
 
 MainWindow::MainWindow(QWidget *parent)
@@ -13,15 +15,29 @@ MainWindow::MainWindow(QWidget *parent)
     ui->progressBar->setRange(0,100);
 //    ui->progressBar->setValue(50);
     timer=new QTimer(this);
+    DataTimer = new QTimer(this);
     timer->setInterval(1000);
     connect(timer, SIGNAL(timeout()), this, SLOT(setUsage()));
     //QThread::msleep(1000);
     qRegisterMetaType<pcl::PointCloud<pcl::PointXYZ>::Ptr >("pcl::PointCloud<pcl::PointXYZ>::Ptr");
     gpscnt = 0;
     connect(ui->actionInitializing, SIGNAL(triggered()), this, SLOT(Initializing_for_Live()));  
-    connect(ui->actionLive_Streaming, SIGNAL(triggered()), this, SLOT(sensing_start()));
+    //connect(ui->actionLive_Streaming, SIGNAL(triggered()), this, SLOT(sensing_start()));
     connect(ui->actionInitializing_2, SIGNAL(triggered()), this, SLOT(Initializing_for_Playback()));  
-    connect(ui->actionStreaming_End, SIGNAL(triggered()), this, SLOT(sensing_stop()));
+    //connect(ui->actionStreaming_End, SIGNAL(triggered()), this, SLOT(sensing_stop()));
+
+    ui->logo->setAlignment(Qt::AlignCenter);
+    QPixmap temp_jpeg;
+   temp_jpeg.load("../resource/diva_logo.jpg");
+   ui->logo->setPixmap(temp_jpeg.scaled(ui->logo->width(), ui->logo->height()));
+    ui->logo->show();
+
+//    QCustomPlot *plt=new QCustomPlot(this);
+//    plt->setGeometry(1,1,200,200);
+//    plt->setStyleSheet("QLabel { background-color: rgba(255, 255, 255, 0); }");
+    //ui->plot->setBackground(QBrush(QColor(255,255,255,80)));
+    GraphInit(ui->plot);
+//    plt->show();
 }
 
 MainWindow::~MainWindow()
@@ -147,7 +163,7 @@ void MainWindow::display_cam(QImage image){
 }
 
 void MainWindow::display_handle_data(QString str){
-    str.prepend("Handle degree\n");
+    str.prepend("Steering Wheel Degree\n");
     //str.append("\n");
     // str.append("\nHandle acceleration : ");
     // str.append(str2);
@@ -164,13 +180,13 @@ void MainWindow::speedChanged(float value){
 
 void MainWindow::display_gear(int gear){
     if(gear == 1){//P
-        redRectLabel->move(1306, 245);
+        redRectLabel->move(1306, 665);
     }else if(gear == 2){//R
-        redRectLabel->move(1356, 245);
+        redRectLabel->move(1356, 665);
     }else if(gear == 3){//N
-        redRectLabel->move(1406, 245);
+        redRectLabel->move(1406, 665);
     }else if(gear == 4){//D
-        redRectLabel->move(1456, 245);
+        redRectLabel->move(1456, 665);
     }else{
         return;
     }
@@ -197,7 +213,6 @@ void MainWindow::display_turn_indicator(int turn){
 
 
 void MainWindow::Make(){
-
     ui->progressBar->setMaximum(100);
     lvw = new lidarVTKWidget(this);
     camWidget=ui->Cam;
@@ -205,26 +220,26 @@ void MainWindow::Make(){
     gpsWidget2 = new QLabel(this);
     mpage = new QWebEnginePage(this);
     mview = new QWebEngineView(this);
-    iw = new imuWidget();
+    //iw = new imuWidget();
     mSpeedGauge = new QcGaugeWidget;
     
-    QPixmap lpix("/home/yh/DIVA2_QT/resource/leftarrowbefore.png");
-    QPixmap rpix("/home/yh/DIVA2_QT/resource/rightarrowbefore.png");
+    QPixmap lpix("../resource/leftarrowbefore.png");
+    QPixmap rpix("../resource/rightarrowbefore.png");
     ui->label->setPixmap(rpix);
     ui->label_2->setPixmap(lpix);
     
-   QPixmap redRectPixm("/home/yh/DIVA2_QT/resource/square.png");
+   QPixmap redRectPixm("../resource/square.png");
    redRectLabel = new QLabel(this);
    redRectLabel->setStyleSheet("QLabel { background-color: rgba(255, 255, 255, 0); }");
    redRectLabel->setPixmap(redRectPixm);
    redRectLabel->resize(35,35);
-   redRectLabel->move(1306, 245); //p
+   redRectLabel->move(1306, 665); //p
    redRectLabel->raise();
    redRectLabel->show();
 
 
-    QPixmap lArrowPixm("/home/yh/DIVA2_QT/resource/leftarrow.png");
-    QPixmap rArrowPixm("/home/yh/DIVA2_QT/resource/rightarrow.png");
+    QPixmap lArrowPixm("../DIVA2_QT/resource/leftarrow.png");
+    QPixmap rArrowPixm("../DIVA2_QT/resource/rightarrow.png");
     lArrowLabel  = new QLabel(this); lArrowLabel->setStyleSheet("QLabel { background-color: rgba(255, 255, 255, 0); }");
     rArrowLabel = new QLabel(this); rArrowLabel->setStyleSheet("QLabel { background-color: rgba(255, 255, 255, 0); }");
     lArrowLabel->setPixmap(lArrowPixm);
@@ -240,7 +255,7 @@ void MainWindow::Make(){
     mview->setGeometry(650, 30, 580, 810);
     //mview->setAttribute(Qt::WA_TranslucentBackground);
     mview->setStyleSheet("background:transparent;");
-    mpage->setUrl(QUrl("http://localhost:8080/map.html"));
+    mpage->setUrl(QUrl("http://localhost:8080/map_real.html"));
     mpage->setBackgroundColor(Qt::transparent);
     mpage->setView(mview);
 
@@ -254,7 +269,7 @@ void MainWindow::Make(){
     gpsWidget2->raise();
 
     //imu widget
-    ui->gridLayout_3->layout()->addWidget(iw);
+    //ui->gridLayout_3->layout()->addWidget(iw);
 
     //can widget
     mSpeedGauge->addBackground(99);
@@ -333,10 +348,11 @@ void MainWindow::Initializing_for_Live(){
     }
     if(use_imu){
         connect(ui->actionLive_Streaming, SIGNAL(triggered()), it, SLOT(start()));
-        connect(it, SIGNAL(send_acc(float, float, float)), iw, SLOT(streaming_start(float,float,float)));
-        connect(it, SIGNAL(send_acc(float,float,float)), this, SLOT(display_imu_xyz(float, float, float)));
+        connect(ui->actionLive_Streaming, SIGNAL(triggered()), this, SLOT(start_graph_timer()));
+        //connect(it, SIGNAL(send_acc(float, float, float)), iw, SLOT(streaming_start(float,float,float)));
+        connect(it, SIGNAL(send_acc(float, float, float)), this, SLOT(display_imu_xyz(float, float, float)));
         connect(ui->actionStreaming_End, SIGNAL(triggered()), it, SLOT(stop()));
-
+        connect(ui->actionStreaming_End, SIGNAL(triggered()), this, SLOT(stop_graph_timer()));
     }
     if(use_can){
         connect(ui->actionLive_Streaming, SIGNAL(triggered()), cant, SLOT(start()));
@@ -347,7 +363,74 @@ void MainWindow::Initializing_for_Live(){
         connect(ui->actionStreaming_End, SIGNAL(triggered()), cant, SLOT(stop()));
         connect(cant, SIGNAL(send_end()), cant, SLOT(deleteLater()));
     }
-    
+}
+
+void MainWindow::start_graph_timer(){
+    connect(DataTimer, SIGNAL(timeout()), this, SLOT(RealTimeDataSlot()));
+    DataTimer->start(10); // Interval 0 means to refresh as fast as possible
+}
+
+void MainWindow::stop_graph_timer(){
+    DataTimer->stop();
+}
+
+void MainWindow::GraphInit(QCustomPlot *customPlot)
+{
+    QStringList lineNames;
+    lineNames<<"pitch"<<"roll";
+
+    customPlot->setBackground(QBrush(QColor(255,255,255,80)));
+    customPlot->addGraph(); // blue line
+    customPlot->graph(0)->setPen(QPen(QColor(40, 110, 255)));
+    customPlot->graph(0)->setName("pitch");
+
+    customPlot->addGraph(); // red line
+    customPlot->graph(1)->setPen(QPen(QColor(255, 110, 40)));
+    customPlot->graph(1)->setName("roll");
+
+    QSharedPointer<QCPAxisTickerTime> timeTicker(new QCPAxisTickerTime);
+    timeTicker->setTimeFormat("%h:%m:%s");
+    customPlot->xAxis->setTicker(timeTicker);
+    customPlot->axisRect()->setupFullAxesBox();
+    customPlot->yAxis->setRange(-1.5, 1.5);
+
+    customPlot->xAxis->setLabel("Elapsed time");
+    customPlot->yAxis->setLabel("Degree");
+
+    customPlot->legend->setVisible(true);
+    customPlot->legend->setBrush(QBrush(QColor(255,255,255,100)));
+    customPlot->axisRect()->setBackground(QBrush(QColor(255,255,255,80)));
+    customPlot->axisRect()->insetLayout()->setInsetAlignment(0,Qt::AlignLeft|Qt::AlignTop);
+      // make left and bottom axes transfer their ranges to right and top axes:
+    connect(customPlot->xAxis, SIGNAL(rangeChanged(QCPRange)), customPlot->xAxis2, SLOT(setRange(QCPRange)));
+    connect(customPlot->yAxis, SIGNAL(rangeChanged(QCPRange)), customPlot->yAxis2, SLOT(setRange(QCPRange)));
+
+      // setup a timer that repeatedly calls MainWindow::realtimeDataSlot:
+//      connect(DataTimer, SIGNAL(timeout()), this, SLOT(RealTimeDataSlot()));
+//      DataTimer->start(10); // Interval 0 means to refresh as fast as possible
+}
+
+void MainWindow::RealTimeDataSlot()
+{
+    static QTime timeStart = QTime::currentTime();
+      // calculate two new data points:
+    double key = timeStart.msecsTo(QTime::currentTime())/1000.0; // time elapsed since start of demo, in seconds
+    //double key=timeStart.msecsSinceStartOfDay()/1000.0;
+
+    static double lastPointKey = 0;
+      if (key-lastPointKey > 0.01) // at most add point every 2 ms
+      {
+        // add data to lines:
+        ui->plot->graph(0)->addData(key, (double)pitch);
+        ui->plot->graph(1)->addData(key, (double)roll);
+        // rescale value (vertical) axis to fit the current data:
+        ui->plot->graph(0)->rescaleValueAxis(true);
+        ui->plot->graph(1)->rescaleValueAxis(true);
+        lastPointKey = key;
+      }
+      // make key axis range scroll with the data (at a constant range size of 8):
+      ui->plot->xAxis->setRange(key, 8, Qt::AlignRight);
+      ui->plot->replot();
 }
 
 void MainWindow::start_can_streaming(){
@@ -355,11 +438,12 @@ void MainWindow::start_can_streaming(){
 }  
 
 void MainWindow::initial_map(){
-    mpage->setUrl(QUrl("http://localhost:8080/map.html"));
+    mpage->setUrl(QUrl("http://localhost:8080/map_real.html"));
     //mpage->setView(mview);
 }
 
 void MainWindow::Initializing_for_Playback(){
+    GraphInit(ui->plot);
     this->Make();
     mview->show();
 
@@ -367,7 +451,8 @@ void MainWindow::Initializing_for_Playback(){
         connect(ui->actionGet_Log, SIGNAL(triggered()), this, SLOT(get_log_token()));
         connect(ui->actionGet_Log, SIGNAL(triggered()), lvw, SLOT(init()), Qt::QueuedConnection);
         connect(this, SIGNAL(send_pcd(QString)), lvw, SLOT(display_pcd(QString)));
-        connect(this, SIGNAL(send_imu(float, float, float)), iw, SLOT(streaming_start(float,float,float)));
+        //connect(this, SIGNAL(send_imu(float, float, float)), iw, SLOT(streaming_start(float,float,float)));
+        connect(it, SIGNAL(send_imu(float, float, float)), this, SLOT(display_imu_xyz(float, float, float)));
         connect(ui->actionFinish, SIGNAL(triggered()), this, SLOT(Display_Stop()));
     }else{
         std::cout<<"Can't connect to DB"<<std::endl;
@@ -408,36 +493,21 @@ void MainWindow::get_log_token(){
 void MainWindow::Display_Scene(QString Text){
     cout<<"Display_Scene_Start"<<endl;
     this->scene_from_db = new QSqlQuery(this->database);
-    cout<<"1"<<endl;
     QString selectq = "SELECT * FROM SCENE WHERE log_token = '";
-    cout<<"2"<<endl;
     selectq.append(Text);
-    cout<<"3"<<endl;
     selectq.append("';");
-    cout<<"4"<<endl;
     this->scene_from_db->exec(selectq);
-    cout<<"5"<<endl;
     scenes_ftoken.clear();
-    cout<<"6"<<endl;
     scenes_nbrframes.clear();
-    cout<<"7"<<endl;
     int idx = 0;
     while(1){
-        cout<<"while start"<<endl;
         if(this->scene_from_db->next()){
-            cout<<"8"<<endl;
             scenes_ftoken.push_back(this->scene_from_db->value(0).toString());
-            cout<<"9"<<endl;
             scenes_nbrframes.push_back(this->scene_from_db->value(2).toInt());
-            cout<<"10"<<endl;
             QString Scene_temp = QString::number(idx, 10);
-            cout<<"11"<<endl;
             Scene_temp.prepend("scene_");
-            cout<<"12"<<endl;
             ui->Scene_list->addItem(Scene_temp);
-            cout<<"13"<<endl;
             idx++;
-            cout<<"14"<<endl;
         }else break;        
     }
 
@@ -496,6 +566,8 @@ void MainWindow::Setting_Frames(QString Text){
     this->frame_from_db = new QSqlQuery(this->database);
     QString selectq = "SELECT * FROM FRAME;";
     this->frame_from_db -> exec(selectq);
+
+    start_graph_timer();
 
     while(display_flag){
         if(counted_frames > nbr_frames-1){
@@ -618,8 +690,9 @@ void MainWindow::Display_Imu_Data(QString Text){
 //    idx_az =this->imu_from_db->value(3).toString();
     
 //    emit send_imu(idx_ax.toFloat(), idx_ay.toFloat(), idx_az.toFloat());
-    QCoreApplication::processEvents();   
+    //QCoreApplication::processEvents();
     cout<<"display imu data end"<<endl;
+    DataTimer->stop();
 }
 
 
@@ -689,17 +762,12 @@ void MainWindow::initialize_for_slider(){
     //iw->clear();
 }
 
-void MainWindow::setTotal(){
-    total=static_cast<double>(storage.bytesTotal()/1024/1024/1024);
-    QString s_total="Total: "+QString::number(total)+" GB";
-    ui->total->setText(s_total);
-}
-
 void MainWindow::setUsage(){
-    total=static_cast<double>(storage.bytesTotal()/1024/1024/1024);
+    total=(storage.bytesTotal()/1024/1024/1024);
+    cout<<"total:"<<total<<endl;
     QString s_total="Total: "+QString::number(total)+" GB";
     ui->total->setText(s_total);
-    free=static_cast<double>(storage.bytesAvailable()/1024/1024/1024);
+    free=(storage.bytesAvailable()/1024/1024/1024);
     QString s_free="Free: "+QString::number(free)+" GB";
     ui->usage->setText(s_free);
     used=total-free;
@@ -708,16 +776,19 @@ void MainWindow::setUsage(){
     ui->progressBar->setValue(percent);
 }
 
-void MainWindow::display_imu_xyz(float x, float y, float z){
-    QString xs=QString::number(x);
-    QString ys=QString::number(y);
-    QString zs=QString::number(z);
+void MainWindow::display_imu_xyz(float accel_x, float accel_y, float accel_z){
+    pitch = my_round(180 * atan(accel_x / sqrt(accel_y * accel_y + accel_z * accel_z)) / M_PI);
+    roll = my_round(180 * atan(accel_y / sqrt(accel_x * accel_x + accel_z * accel_z)) / M_PI);
+    QString xs=QString::number(accel_x);
+    QString ys=QString::number(accel_y);
+    QString zs=QString::number(accel_z);
     QString str;
     xs.prepend("Acceleration\nX: ");
-    ys.prepend("G\nY: ");
-    zs.prepend("G\nZ: ");
+    ys.prepend("G  Y: ");
+    zs.prepend("G  Z: ");
     str=xs+ys+zs+"G";
     ui->label_8->setText(str);
+
     QCoreApplication::processEvents();
 }
 
@@ -728,4 +799,8 @@ void MainWindow::sensing_start(){
 void MainWindow::sensing_stop(){
     system("pkill -ef MP_sensing");
     //system("expect -f ../send_file.exp 파일경로");
+}
+
+float MainWindow::my_round(float num){
+    return round(num*100)/100;
 }

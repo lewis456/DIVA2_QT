@@ -1,6 +1,7 @@
 #include "imuthread.h"
 #include <zmq.hpp>
 #include <sys/time.h>
+#include <cmath>
 
 inline static std::string s_recv(zmq::socket_t & socket, int flags = 0) {
     zmq::message_t message;
@@ -19,7 +20,7 @@ void imuThread::run() {
 
     zmq::context_t ctx(2);
     zmq::socket_t imu_sub(ctx, ZMQ_SUB);
-    imu_sub.connect( "tcp://127.0.0.1:5563");
+    imu_sub.connect( "tcp://165.246.39.124:5564");
     imu_sub.setsockopt(ZMQ_SUBSCRIBE,  "IMU", 3);
     
     file.open("imu_delay.csv");
@@ -29,12 +30,13 @@ void imuThread::run() {
         string topic=s_recv(imu_sub);
         zmq::message_t msg;
         imu_sub.recv(&msg);
+        cout<<"recived\n";
 
         //protobuf parsing
         imu.ParseFromArray(msg.data(), msg.size());
-        accel_x=imu.scaledaccelx();
-        accel_y=imu.scaledaccely();
-        accel_z=imu.scaledaccelz();
+        accel_x=my_round(imu.scaledaccelx());
+        accel_y=my_round(imu.scaledaccely());
+        accel_z=my_round(imu.scaledaccelz());
         
         struct timeval tv;
         gettimeofday(&tv, NULL);
@@ -45,6 +47,9 @@ void imuThread::run() {
     }
 }
 
+float imuThread::my_round(float num){
+    return round(num*100)/100;
+}
 
 void imuThread::stop(){
 	stop_flag = true;

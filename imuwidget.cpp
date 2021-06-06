@@ -25,14 +25,14 @@ void imuWidget::paintGL(){
         glRotatef(0, 0.0, 1.0, 0.0);
         glRotatef(45, 0.0, 0.0, 1.0);
 
-        double pitch = 180 * atan(accel_x / sqrt(accel_y * accel_y + accel_z * accel_z)) / M_PI;
+        float pitch = my_round(180 * atan(accel_x / sqrt(accel_y * accel_y + accel_z * accel_z)) / M_PI);
         //double yaw = 180 * atan(accel_z / sqrt(accel_x * accel_x + accel_z * accel_z)) / M_PI;
-        double roll =   180 * atan(accel_y / sqrt(accel_x * accel_x + accel_z * accel_z)) / M_PI;
+        float roll = my_round(180 * atan(accel_y / sqrt(accel_x * accel_x + accel_z * accel_z)) / M_PI);
 
         draw_line(roll, pitch);
 
-        glRotatef(float(roll), 1.0, 0.0, 0.0);
-        glRotatef(float(pitch), 0.0, 1.0, 0.0);
+        glRotatef(roll, 1.0, 0.0, 0.0);
+        glRotatef(pitch, 0.0, 1.0, 0.0);
         //glRotatef(yaw, 0.0, 0.0, 1.0);
 
         draw_obj(car);
@@ -114,8 +114,8 @@ void imuWidget::draw_line(double roll, double pitch)
     char *ypitch = new char[256];
     //char *zyaw = new char[256];
 
-    sprintf(xroll, "R_%f", roll);
-    sprintf(ypitch, "P_%f", pitch);
+    sprintf(xroll, "R_%0.2f", roll);
+    sprintf(ypitch, "P_%0.2f", pitch);
     //sprintf(zyaw, "Y_%f", yaw);
 
     glPushMatrix();
@@ -150,4 +150,8 @@ void imuWidget::draw_line(double roll, double pitch)
     glPopMatrix();
     glFlush();
     //swapBuffers();
+}
+
+float imuWidget::my_round(float num){
+    return round(num*100)/100;
 }

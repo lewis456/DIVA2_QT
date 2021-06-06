@@ -36,6 +36,9 @@
 
 #include <QtWebEngineWidgets/QtWebEngineWidgets>
 
+#include <QtCharts/QChartView>
+#include <QtCharts/QLineSeries>
+
 #include "jsoncpp/json/json.h"
 
 #include <stdio.h>
@@ -68,6 +71,7 @@
 #include "canthread.h"
 #include "qcgaugewidget.h"
 #include "imuwidget.h"
+#include "qcustomplot.h"
 
 #include "Timestamp.h"
 
@@ -81,6 +85,7 @@ QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
 
+QT_CHARTS_USE_NAMESPACE
 
 class MainWindow : public QMainWindow
 {
@@ -95,6 +100,8 @@ public:
     bool use_lidar = true;
     bool use_imu = true;
     bool use_can = true;
+
+    float pitch=0, roll=0;
 
 
     QSqlDatabase database;
@@ -120,7 +127,6 @@ public:
     QLabel *camWidget;
     QLabel *gpsWidget;
     QLabel *gpsWidget2;
-    QLabel *diva;
     QcGaugeWidget * mSpeedGauge;
     QcNeedleItem *mSpeedNeedle;
 
@@ -136,6 +142,11 @@ public:
     QLabel *redRectLabel;
     QLabel *lArrowLabel;
     QLabel *rArrowLabel;
+    QLabel *diva;
+
+    QLineSeries *series;
+    QChart *chart;
+
     void Make();
     void Display_Scene(QString Text);
     void Setting_Frames(QString Text);
@@ -146,7 +157,11 @@ public:
 
     bool setting_DB();
 
-    void setTotal();
+    void GraphInit(QCustomPlot *customPlot);
+
+    float my_round(float);
+
+    mutex m;
 
 private:
     Ui::MainWindow *ui;
@@ -154,6 +169,7 @@ private:
     QString file_path;
     int nbr_frames;
     QTimer *timer;
+    QTimer *DataTimer;
 
     class camThread::camThread *ct;
     class gpsThread::gpsThread *gt;
@@ -182,6 +198,7 @@ public slots:
     void display_cam(QImage image);
     void speedChanged(float value);
     void display_imu_xyz(float, float, float);
+    void RealTimeDataSlot();
 
 private slots:
     void Initializing_for_Live();
@@ -210,6 +227,10 @@ private slots:
 
     void sensing_stop();
     void sensing_start();
+
+    void start_graph_timer();
+    void stop_graph_timer();
+
 signals:
     void start();
     void send_dir(QString);

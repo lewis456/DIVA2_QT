@@ -6,6 +6,7 @@ QT += webenginewidgets
 QT += network
 QT += opengl
 QT += 3dcore 3drender 3dinput 3dextras
+QT += charts
 
 CONFIG += c++11
 

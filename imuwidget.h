@@ -16,6 +16,7 @@
 #include <stdlib.h>
 #include <iostream>
 #include <cstdlib>
+#include <cmath>
 
 #include <GL/freeglut.h>
 #include <GL/glut.h>
@@ -47,6 +48,7 @@ class imuWidget : public QGLWidget
 
        void clear();
 
+      float my_round(float);
 private slots:
   void streaming_start(float ax, float ay, float az);
 
