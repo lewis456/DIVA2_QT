@@ -20,7 +20,7 @@ void camThread::run(){
     std::cout<<"CAM Streaming_start"<<std::endl;
     zmq::context_t ctx(1);
      zmq::socket_t cam_sub( ctx, ZMQ_SUB);
-    cam_sub.connect("tcp://165.246.39.124:5564");
+    cam_sub.connect("tcp://127.0.0.1:5563");
     cam_sub.setsockopt(ZMQ_SUBSCRIBE, "CAM", 3);
     if( !cap.isOpened() )
           QThread::msleep(10);

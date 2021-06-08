@@ -34,7 +34,7 @@ void gpsThread::run() {
         latitude = gps.latitude();
         longitude = gps.longitude();
         hdop=gps.horizontaldilutionofprecision();
-        //cout<<gps.latitude()<<" "<<gps.longitude()<<endl;
+        cout<<gps.latitude()<<" "<<gps.longitude()<<endl;
 
         struct timeval tv;
         gettimeofday(&tv, NULL);

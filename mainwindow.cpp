@@ -392,10 +392,12 @@ void MainWindow::GraphInit(QCustomPlot *customPlot)
     timeTicker->setTimeFormat("%h:%m:%s");
     customPlot->xAxis->setTicker(timeTicker);
     customPlot->axisRect()->setupFullAxesBox();
-    customPlot->yAxis->setRange(-1.5, 1.5);
+    customPlot->yAxis->setRange(-2, 2);
 
     customPlot->xAxis->setLabel("Elapsed time");
     customPlot->yAxis->setLabel("Degree");
+
+    customPlot->yAxis->grid()->setSubGridVisible(true);
 
     customPlot->legend->setVisible(true);
     customPlot->legend->setBrush(QBrush(QColor(255,255,255,100)));
@@ -418,7 +420,7 @@ void MainWindow::RealTimeDataSlot()
     //double key=timeStart.msecsSinceStartOfDay()/1000.0;
 
     static double lastPointKey = 0;
-      if (key-lastPointKey > 0.01) // at most add point every 2 ms
+      if (key-lastPointKey > 0.1) // at most add point every 2 ms
       {
         // add data to lines:
         ui->plot->graph(0)->addData(key, (double)pitch);

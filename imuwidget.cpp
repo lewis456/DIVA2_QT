@@ -2,7 +2,7 @@
 
 imuWidget::imuWidget(QWidget *parent) : QGLWidget(parent)
 {
-    car = new ObjParser("/home/yh/git/DIVA2_QT/obj/Car.obj");
+    car = new ObjParser("../obj/Car.obj");
 }
 
 void imuWidget::initializeGL(){
