@@ -16,7 +16,7 @@ lidarThread::lidarThread(QObject* parent) : QThread(parent)
 void lidarThread::run(){
     zmq::context_t ctx(1);
     zmq::socket_t lidar_sub(ctx, ZMQ_SUB);
-    lidar_sub.connect("tcp://127.0.0.1:5563");
+    lidar_sub.connect("tcp://10.8.0.3:5563");
     lidar_sub.setsockopt(ZMQ_SUBSCRIBE, "LIDAR", 5);
 
     file.open("lidar_delay.csv");

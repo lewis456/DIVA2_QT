@@ -16,7 +16,7 @@ canThread::canThread(QObject *parent) : QThread(parent)
 void canThread::run(){
 	zmq::context_t ctx(3);
     zmq::socket_t can_sub(ctx, ZMQ_SUB);
-    can_sub.connect("tcp://127.0.0.1:5563");
+    can_sub.connect("tcp://10.8.0.9:5563");
     can_sub.setsockopt(ZMQ_SUBSCRIBE, "CAN", 3);
 
     file.open("can_delay.csv");

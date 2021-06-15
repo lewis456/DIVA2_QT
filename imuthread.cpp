@@ -20,7 +20,7 @@ void imuThread::run() {
 
     zmq::context_t ctx(2);
     zmq::socket_t imu_sub(ctx, ZMQ_SUB);
-    imu_sub.connect( "tcp://127.0.0.1:5563");
+    imu_sub.connect( "tcp://10.8.0.9:5563");
     imu_sub.setsockopt(ZMQ_SUBSCRIBE,  "IMU", 3);
     
     file.open("imu_delay.csv");
