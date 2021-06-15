@@ -34,9 +34,13 @@ void imuThread::run() {
 
         //protobuf parsing
         imu.ParseFromArray(msg.data(), msg.size());
-        accel_x=my_round(imu.scaledaccelx());
-        accel_y=my_round(imu.scaledaccely());
-        accel_z=my_round(imu.scaledaccelz());
+        // accel_x=my_round(imu.scaledaccelx());
+        // accel_y=my_round(imu.scaledaccely());
+        // accel_z=my_round(imu.scaledaccelz());
+
+        accel_x=imu.scaledaccelx();
+        accel_y=imu.scaledaccely();
+        accel_z=imu.scaledaccelz();
         
         struct timeval tv;
         gettimeofday(&tv, NULL);

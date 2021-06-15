@@ -4,8 +4,8 @@
 
 set dir [lindex $argv 0]
 
-spawn rsync -avzhP $dir ubuntu@13.125.216.169:~
+spawn rsync -avzhP $dir cvlab2@165.246.39.124:~
 expect -re "password"
-send "dudgh123\r"
+send "cvlab525\r"
 
 interact

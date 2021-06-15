@@ -193,7 +193,6 @@ public slots:
     void display_gear(int);
     void display_turn_indicator(int);
     void Display_Stop();
-    void start_can_streaming();
     void gps_view_initialize();
     void display_cam(QImage image);
     void speedChanged(float value);

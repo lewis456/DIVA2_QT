@@ -15,8 +15,8 @@ MainWindow::MainWindow(QWidget *parent)
     ui->progressBar->setRange(0,100);
 //    ui->progressBar->setValue(50);
     timer=new QTimer(this);
-    DataTimer = new QTimer(this);
     timer->setInterval(1000);
+    DataTimer=new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(setUsage()));
     //QThread::msleep(1000);
     qRegisterMetaType<pcl::PointCloud<pcl::PointXYZ>::Ptr >("pcl::PointCloud<pcl::PointXYZ>::Ptr");
@@ -93,8 +93,6 @@ void MainWindow::on_can_cb_stateChanged(int arg1){
 void MainWindow::display_gps_info(QString latitude, QString longitude,double hdop){
     //mpage->setView(mview);
     QString latlong="lat : "+latitude+" lng : "+longitude;
-    //string latlong = " lat : "+latitude.toStdString()+" lng : "+longitude.toStdString();
-    cout<<"signal lat="<<latitude.toStdString()<<" long= "<<longitude.toStdString();
 
     if(latitude != "0" && longitude != "0"){
         //gpsWidget2->setText(QString::fromLocal8Bit(latlong.c_str()));
@@ -238,14 +236,14 @@ void MainWindow::Make(){
    redRectLabel->show();
 
 
-    QPixmap lArrowPixm("../DIVA2_QT/resource/leftarrow.png");
-    QPixmap rArrowPixm("../DIVA2_QT/resource/rightarrow.png");
+    QPixmap lArrowPixm("../resource/leftarrow.png");
+    QPixmap rArrowPixm("../resource/rightarrow.png");
     lArrowLabel  = new QLabel(this); lArrowLabel->setStyleSheet("QLabel { background-color: rgba(255, 255, 255, 0); }");
     rArrowLabel = new QLabel(this); rArrowLabel->setStyleSheet("QLabel { background-color: rgba(255, 255, 255, 0); }");
     lArrowLabel->setPixmap(lArrowPixm);
-    lArrowLabel->setGeometry(1300,280,80,80);
+    lArrowLabel->setGeometry(1300,700,80,80);
     rArrowLabel->setPixmap(rArrowPixm);
-    rArrowLabel->setGeometry(1420,280,80,80);
+    rArrowLabel->setGeometry(1420,700,80,80);
     lArrowLabel->hide(); rArrowLabel->hide();
 
     //lidar widget
@@ -366,8 +364,12 @@ void MainWindow::Initializing_for_Live(){
 }
 
 void MainWindow::start_graph_timer(){
+    cout<<"timer start"<<endl;
+    ui->plot->graph(0)->data()->clear();
+    ui->plot->graph(1)->data()->clear();
+    ui->plot->replot();
     connect(DataTimer, SIGNAL(timeout()), this, SLOT(RealTimeDataSlot()));
-    DataTimer->start(10); // Interval 0 means to refresh as fast as possible
+    DataTimer->start(10);
 }
 
 void MainWindow::stop_graph_timer(){
@@ -378,7 +380,6 @@ void MainWindow::GraphInit(QCustomPlot *customPlot)
 {
     QStringList lineNames;
     lineNames<<"pitch"<<"roll";
-
     customPlot->setBackground(QBrush(QColor(255,255,255,80)));
     customPlot->addGraph(); // blue line
     customPlot->graph(0)->setPen(QPen(QColor(40, 110, 255)));
@@ -392,6 +393,8 @@ void MainWindow::GraphInit(QCustomPlot *customPlot)
     timeTicker->setTimeFormat("%h:%m:%s");
     customPlot->xAxis->setTicker(timeTicker);
     customPlot->axisRect()->setupFullAxesBox();
+
+
     customPlot->yAxis->setRange(-2, 2);
 
     customPlot->xAxis->setLabel("Elapsed time");
@@ -406,10 +409,6 @@ void MainWindow::GraphInit(QCustomPlot *customPlot)
       // make left and bottom axes transfer their ranges to right and top axes:
     connect(customPlot->xAxis, SIGNAL(rangeChanged(QCPRange)), customPlot->xAxis2, SLOT(setRange(QCPRange)));
     connect(customPlot->yAxis, SIGNAL(rangeChanged(QCPRange)), customPlot->yAxis2, SLOT(setRange(QCPRange)));
-
-      // setup a timer that repeatedly calls MainWindow::realtimeDataSlot:
-//      connect(DataTimer, SIGNAL(timeout()), this, SLOT(RealTimeDataSlot()));
-//      DataTimer->start(10); // Interval 0 means to refresh as fast as possible
 }
 
 void MainWindow::RealTimeDataSlot()
@@ -432,12 +431,10 @@ void MainWindow::RealTimeDataSlot()
       }
       // make key axis range scroll with the data (at a constant range size of 8):
       ui->plot->xAxis->setRange(key, 8, Qt::AlignRight);
+      ui->plot->graph(0)->data()->removeBefore(key-8);
+      ui->plot->graph(1)->data()->removeBefore(key-8);
       ui->plot->replot();
 }
-
-void MainWindow::start_can_streaming(){
-    cout<<"here"<<endl;
-}  
 
 void MainWindow::initial_map(){
     mpage->setUrl(QUrl("http://localhost:8080/map_real.html"));
@@ -445,7 +442,6 @@ void MainWindow::initial_map(){
 }
 
 void MainWindow::Initializing_for_Playback(){
-    GraphInit(ui->plot);
     this->Make();
     mview->show();
 
@@ -454,7 +450,7 @@ void MainWindow::Initializing_for_Playback(){
         connect(ui->actionGet_Log, SIGNAL(triggered()), lvw, SLOT(init()), Qt::QueuedConnection);
         connect(this, SIGNAL(send_pcd(QString)), lvw, SLOT(display_pcd(QString)));
         //connect(this, SIGNAL(send_imu(float, float, float)), iw, SLOT(streaming_start(float,float,float)));
-        connect(it, SIGNAL(send_imu(float, float, float)), this, SLOT(display_imu_xyz(float, float, float)));
+        connect(this, SIGNAL(send_imu(float, float, float)), this, SLOT(display_imu_xyz(float, float, float)));
         connect(ui->actionFinish, SIGNAL(triggered()), this, SLOT(Display_Stop()));
     }else{
         std::cout<<"Can't connect to DB"<<std::endl;
@@ -472,28 +468,26 @@ struct MainWindow::CurrentLog
 //id MainWindow::get_log_token(){    cout<<"log_displayed"<<endl;}
 
 void MainWindow::get_log_token(){
-    cout<<"get_log_token start"<<endl;
     ui->Date_list->clear();
     this_is_get_log = true;
     this->log_from_db = new QSqlQuery(this->database);
     this->log_from_db->exec("SELECT * FROM LOG;");
     MainWindow::CurrentLog current_log;
-    this->log_from_db->first();
+    //this->log_from_db->first();
     
     while(1){
         if(this->log_from_db->next()){
-            current_log.t = this->log_from_db->value(0).toString();
+            current_log.t = this->log_from_db->value(1).toString();
             current_log.v = this->log_from_db->value(2).toString();
-            current_log.d =  this->log_from_db->value(1).toString();
+            current_log.d =  this->log_from_db->value(0).toString();
+            cout<<"data"<<current_log.d.toStdString()<<endl;
             logs.push_back(current_log);
             ui->Date_list->addItem(current_log.d);
         }else break;
     }
-    cout<<"get_log_token end"<<endl;
 }
 
 void MainWindow::Display_Scene(QString Text){
-    cout<<"Display_Scene_Start"<<endl;
     this->scene_from_db = new QSqlQuery(this->database);
     QString selectq = "SELECT * FROM SCENE WHERE log_token = '";
     selectq.append(Text);
@@ -522,7 +516,6 @@ QString *saved_token_for_cnt_frames;
 
 //어떤 날짜에 데이터가 저장되어있는지 보고 해당 날짜의 CAM과 Lidar데이터 다운
 void MainWindow::on_pushButton_clicked(){
-   cout<<"on_push_start"<<endl;
    if(this_is_get_log){
       int log_row = ui->Date_list->currentRow();
       CurrentLog current_log = logs.at(log_row);
@@ -533,9 +526,9 @@ void MainWindow::on_pushButton_clicked(){
       this_is_get_log = false;
       this->Display_Scene(current_log.t);
       //해당 날짜 데이터 다운받는 expect script실행
-      string command="expect -f ../recv_file.exp " ;
-      command.append(selected_date.toStdString());
-      int ret=system(command.c_str());
+    //   string command="expect -f ../recv_file.exp " ;
+    //   command.append(selected_date.toStdString());
+    //   int ret=system(command.c_str());
        
       ui->pushButton->setText("Play");
    }else{
@@ -563,13 +556,12 @@ void MainWindow::on_Scene_list_itemClicked(QListWidgetItem *item){
 
 
 void MainWindow::Setting_Frames(QString Text){
-    cout<<"setting_frames start"<<endl;
     QString current_frame_token = Text;
     this->frame_from_db = new QSqlQuery(this->database);
     QString selectq = "SELECT * FROM FRAME;";
     this->frame_from_db -> exec(selectq);
 
-    start_graph_timer();
+    this->start_graph_timer();
 
     while(display_flag){
         if(counted_frames > nbr_frames-1){
@@ -595,7 +587,7 @@ void MainWindow::Setting_Frames(QString Text){
             idx_for_cnt_frames++;
         }
     }
-    cout<<"setting_frames end"<<endl;
+    this->stop_graph_timer();
 }
 
 //DB에 있는 토큰값으로 플레이백
@@ -603,15 +595,13 @@ void MainWindow::Setting_Frames(QString Text){
 //나머지는 튜플에 저장된 센서값 사용
 void MainWindow::Display_Frame_Datas(QString Text){
     //저장된 폴더 경로
-    //build/YYYY-MM-DD/
-    QString cur_dir="./";
+    //build/YYYYMMDD/
+    QString cur_dir="";
     cur_dir.append(selected_date);
     
     QString pcd_dir=cur_dir+"/LIDAR/";
 
     QString cam_dir=cur_dir + "/CAM/";
-
-    cout<<"display_frame_datas start"<<endl;
     QString idx_file_format;
     QString idx_frame_data_token;
 
@@ -642,13 +632,11 @@ void MainWindow::Display_Frame_Datas(QString Text){
     this->Display_Can_Data(this->frame_data_jpg_from_db->value(1).toString());
 
     camWidget->show();
-    QCoreApplication::processEvents();
-    cout<<"display frame datas end"<<endl;
+    //QCoreApplication::processEvents();
 }
 
 
 void MainWindow::Display_Gps_Data(QString Text){
-    cout<<"display gps data start"<<endl;
     QString idx_lat;
     QString idx_lng;
     double idx_hdop;
@@ -666,14 +654,9 @@ void MainWindow::Display_Gps_Data(QString Text){
 
     this->display_gps_info(idx_lat, idx_lng, idx_hdop);
     QCoreApplication::processEvents();
-    cout<<"display gps data end"<<endl;
 }
 
 void MainWindow::Display_Imu_Data(QString Text){
-    cout<<"display imu data start"<<endl;
-//    QString idx_ax;
-//    QString idx_ay;
-//    QString idx_az;
     float idx_ax, idx_ay, idx_az;
 
     this->imu_from_db = new QSqlQuery(this->database);
@@ -693,8 +676,6 @@ void MainWindow::Display_Imu_Data(QString Text){
     
 //    emit send_imu(idx_ax.toFloat(), idx_ay.toFloat(), idx_az.toFloat());
     //QCoreApplication::processEvents();
-    cout<<"display imu data end"<<endl;
-    DataTimer->stop();
 }
 
 
@@ -712,9 +693,9 @@ void MainWindow::Display_Can_Data(QString Text){
 
     this->can_from_db->first();
     handle = this->can_from_db->value(1).toString();
-    speed =this->can_from_db->value(2).toString();
-    gear=this->can_from_db->value(3).toString();
-    turn=this->can_from_db->value(4).toString();
+    speed =this->can_from_db->value(3).toString();
+    gear=this->can_from_db->value(4).toString();
+    turn=this->can_from_db->value(2).toString();
     
     this->display_handle_data(handle);
     this->display_gear(gear.toInt());
@@ -727,8 +708,8 @@ void MainWindow::Display_Can_Data(QString Text){
 bool MainWindow::setting_DB(){
     cout<<"setting db start"<<endl;
         // *****Set DB Information*****
-        QSqlDatabase database=QSqlDatabase::addDatabase("QPSQL7");
-        database.setDatabaseName("diva2");
+        QSqlDatabase database=QSqlDatabase::addDatabase("QPSQL");
+        database.setDatabaseName("diva2db");
         database.setHostName("165.246.39.124");
         database.setUserName("diva2");
         database.setPassword("1234");
@@ -779,6 +760,9 @@ void MainWindow::setUsage(){
 }
 
 void MainWindow::display_imu_xyz(float accel_x, float accel_y, float accel_z){
+    accel_x=my_round(accel_x);
+    accel_y=my_round(accel_y);
+    accel_z=my_round(accel_z);
     pitch = my_round(180 * atan(accel_x / sqrt(accel_y * accel_y + accel_z * accel_z)) / M_PI);
     roll = my_round(180 * atan(accel_y / sqrt(accel_x * accel_x + accel_z * accel_z)) / M_PI);
     QString xs=QString::number(accel_x);
