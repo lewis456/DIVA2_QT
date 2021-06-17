@@ -9,6 +9,12 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
+    QPixmap bg("/home/yh/git/DIVA2_QT_pb/color.jpeg");
+    QPalette p(palette());
+    p.setBrush(QPalette::Background,bg);
+
+    setAutoFillBackground(true);
+    setPalette(p);
     ui->setupUi(this);
     this->setFixedSize(1776,900);
     storage=QStorageInfo::root();
@@ -26,18 +32,14 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->actionInitializing_2, SIGNAL(triggered()), this, SLOT(Initializing_for_Playback()));  
     //connect(ui->actionStreaming_End, SIGNAL(triggered()), this, SLOT(sensing_stop()));
 
+    connect(ui->actionAlgorithm_Test, SIGNAL(triggered()), this, SLOT(start_algorithm()));
+    connect(ui->actionSend_Data, SIGNAL(triggered()), this, SLOT(send_data()));
     ui->logo->setAlignment(Qt::AlignCenter);
     QPixmap temp_jpeg;
    temp_jpeg.load("../resource/diva_logo.jpg");
    ui->logo->setPixmap(temp_jpeg.scaled(ui->logo->width(), ui->logo->height()));
     ui->logo->show();
-
-//    QCustomPlot *plt=new QCustomPlot(this);
-//    plt->setGeometry(1,1,200,200);
-//    plt->setStyleSheet("QLabel { background-color: rgba(255, 255, 255, 0); }");
-    //ui->plot->setBackground(QBrush(QColor(255,255,255,80)));
     GraphInit(ui->plot);
-//    plt->show();
 }
 
 MainWindow::~MainWindow()
@@ -607,29 +609,29 @@ void MainWindow::Display_Frame_Datas(QString Text){
 
     this->frame_data_jpg_from_db = new QSqlQuery(this->database);
     this->frame_data_pcd_from_db = new QSqlQuery(this->database);
-    QString selectq1 = "SELECT * FROM FRAME_DATA WHERE fileformat='jpeg' and frame_token = '";
+    QString selectq1 = "SELECT * FROM CAM_DATA WHERE fileformat='jpg' and token = '";
     selectq1.append(Text);
     selectq1.append("';");
     this->frame_data_jpg_from_db -> exec(selectq1);
-    QString selectq2 = "SELECT * FROM FRAME_DATA WHERE fileformat='pcd' and frame_token = '";
+    QString selectq2 = "SELECT * FROM LIDAR_DATA WHERE fileformat='pcd' and token = '";
     selectq2.append(Text);
     selectq2.append("';");
     this->frame_data_pcd_from_db -> exec(selectq2);
 
     this->frame_data_pcd_from_db->first();
-    QString idx_lidar_filename =pcd_dir + this->frame_data_pcd_from_db->value(3).toString();
+    QString idx_lidar_filename =pcd_dir + this->frame_data_pcd_from_db->value(2).toString();
     emit send_pcd(idx_lidar_filename);
     QCoreApplication::processEvents();
 
     this->frame_data_jpg_from_db->first();
     QPixmap temp_jpeg;
-    QString idx_jpg_filename = cam_dir+ this->frame_data_jpg_from_db->value(3).toString();
+    QString idx_jpg_filename = cam_dir+ this->frame_data_jpg_from_db->value(2).toString();
     temp_jpeg.load(idx_jpg_filename);
     camWidget->setPixmap(temp_jpeg.scaled(camWidget->width(),camWidget->height(), Qt::KeepAspectRatio));
 
-    this->Display_Gps_Data(this->frame_data_jpg_from_db->value(1).toString());
-    this->Display_Imu_Data(this->frame_data_jpg_from_db->value(1).toString());
-    this->Display_Can_Data(this->frame_data_jpg_from_db->value(1).toString());
+    this->Display_Gps_Data(Text);
+    this->Display_Imu_Data(Text);
+    this->Display_Can_Data(Text);
 
     camWidget->show();
     //QCoreApplication::processEvents();
@@ -670,12 +672,6 @@ void MainWindow::Display_Imu_Data(QString Text){
     idx_ay=this->imu_from_db->value(2).toFloat();
     idx_az=this->imu_from_db->value(3).toFloat();
     emit send_imu(idx_ax, idx_ay, idx_az);
-//    idx_ax = this->imu_from_db->value(1).toString();
-//    idx_ay =this->imu_from_db->value(2).toString();
-//    idx_az =this->imu_from_db->value(3).toString();
-    
-//    emit send_imu(idx_ax.toFloat(), idx_ay.toFloat(), idx_az.toFloat());
-    //QCoreApplication::processEvents();
 }
 
 
@@ -693,9 +689,9 @@ void MainWindow::Display_Can_Data(QString Text){
 
     this->can_from_db->first();
     handle = this->can_from_db->value(1).toString();
+    turn=this->can_from_db->value(2).toString();
     speed =this->can_from_db->value(3).toString();
     gear=this->can_from_db->value(4).toString();
-    turn=this->can_from_db->value(2).toString();
     
     this->display_handle_data(handle);
     this->display_gear(gear.toInt());
@@ -784,9 +780,20 @@ void MainWindow::sensing_start(){
 
 void MainWindow::sensing_stop(){
     system("pkill -ef MP_sensing");
-    //system("expect -f ../send_file.exp 파일경로");
 }
 
 float MainWindow::my_round(float num){
     return round(num*100)/100;
+}
+
+void MainWindow::send_data(){
+    QString dir = QFileDialog::getExistingDirectory(this, "Select Data to Send", QDir::currentPath(),QFileDialog::ShowDirsOnly);
+    cout<<dir.toStdString()<<endl;
+    string s="expect -f ../send_file.exp " + dir.toStdString();
+    s.append(" &");
+    system(s.c_str());
+}
+
+void MainWindow::start_algorithm(){
+    //system("알고리즘 실행파일")
 }

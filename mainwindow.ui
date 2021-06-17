@@ -14,7 +14,7 @@
    <string>DIVA _ Data Intergration for Vehicle Assistance</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">background : rgb(211, 215, 207)</string>
+   <string notr="true"/>
   </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QLabel" name="label_5">
@@ -647,6 +647,7 @@ color: rgba(103, 73, 203, 230);</string>
     <addaction name="actionInitializing"/>
     <addaction name="actionLive_Streaming"/>
     <addaction name="actionStreaming_End"/>
+    <addaction name="actionSend_Data"/>
    </widget>
    <widget class="QMenu" name="menuPlayback">
     <property name="title">
@@ -654,6 +655,7 @@ color: rgba(103, 73, 203, 230);</string>
     </property>
     <addaction name="actionInitializing_2"/>
     <addaction name="actionGet_Log"/>
+    <addaction name="actionAlgorithm_Test"/>
     <addaction name="actionFinish"/>
    </widget>
    <addaction name="menuStreaming"/>
@@ -712,6 +714,16 @@ color: rgba(103, 73, 203, 230);</string>
   <action name="actionDB_Storing">
    <property name="text">
     <string>DB Storing</string>
+   </property>
+  </action>
+  <action name="actionAlgorithm_Test">
+   <property name="text">
+    <string>Algorithm Test</string>
+   </property>
+  </action>
+  <action name="actionSend_Data">
+   <property name="text">
+    <string>Send Data</string>
    </property>
   </action>
  </widget>

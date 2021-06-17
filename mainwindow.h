@@ -17,7 +17,7 @@
 #include <QTimer>
 #include <QMetaType>
 #include <QStorageInfo>
-
+#include <QPalette>
 
 #include <QSqlDatabase>
 #include <QSqlQuery>
@@ -229,6 +229,10 @@ private slots:
 
     void start_graph_timer();
     void stop_graph_timer();
+
+    void start_algorithm();
+
+    void send_data();
 
 signals:
     void start();
