@@ -6,7 +6,6 @@
 
 syntax = "proto3";
 package sensors;
-import "google/protobuf/timestamp.proto";
 
 message Gps{
     
@@ -23,15 +22,6 @@ message Imu{
     float scaledAccelZ = 3;
 
     double timestamp=4;
-}
-
-enum ChannelOrder {
-	GRAYSCALE = 0;
-	BGR = 1;
-	RGB = 2;
-	BGRA = 3;
-	RGBA = 4;
-	OPTICAL_FLOW = 5;
 }
 
 message Cam{

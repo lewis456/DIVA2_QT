@@ -17,18 +17,6 @@
 #include <google/protobuf/text_format.h>
 #include "sensors.pb.h"
 
-class CANdata {
-public:
-    CANdata(QObject *parent = 0){
-        handle_angle = 0;
-        vehicle_speed = 0;
-        gear = 0;
-        turn_indicator = 2;
-    }
-    int handle_angle, vehicle_speed,gear, turn_indicator;
-};
-
-
 class canThread : public QThread
 {
 	Q_OBJECT

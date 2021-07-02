@@ -31,8 +31,6 @@ public:
 
 	ofstream file;
 
-	float my_round(float);
-
 private slots:
     void stop();
 

@@ -16,7 +16,7 @@ lidarThread::lidarThread(QObject* parent) : QThread(parent)
 void lidarThread::run(){
     zmq::context_t ctx(1);
     zmq::socket_t lidar_sub(ctx, ZMQ_SUB);
-    lidar_sub.connect("tcp://10.8.0.3:5563");
+    lidar_sub.connect("tcp://10.8.0.8:5563");
     lidar_sub.setsockopt(ZMQ_SUBSCRIBE, "LIDAR", 5);
 
     file.open("lidar_delay.csv");
@@ -27,10 +27,14 @@ void lidarThread::run(){
         zmq::message_t msg;
         lidar_sub.recv(&msg);
 
-        std::cout<<"recived!!\n";
+        //protobuf parsing
         lidar.ParseFromArray(msg.data(), msg.size());
+
+        //size크기의 PointCloud 생성
         int size=(int)lidar.size();
         cloud.resize(size);
+
+        //생성한 PointCloud에 point들 좌표 삽입
         int i=0;
         for (auto & point : cloud) {
             point.x = lidar.data(i).x();
@@ -39,14 +43,16 @@ void lidarThread::run(){
             i++;
         }
 
+        //전송 delay 측정
         struct timeval tv;
         gettimeofday(&tv, NULL);
         double cur=1000000*tv.tv_sec + tv.tv_usec;
         file<<cur-lidar.timestamp()<<",us\n";
 
+        //signal
         *ptr_cloud=cloud;
         emit send_lidar(ptr_cloud);
-        }
+    }
     QCoreApplication::processEvents();
 }
 void lidarThread::stop(){

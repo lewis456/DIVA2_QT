@@ -20,7 +20,7 @@ gpsThread::gpsThread(QObject *parent) : QThread(parent)
 void gpsThread::run() {
     zmq::context_t ctx(1);
     zmq::socket_t gps_sub(ctx, ZMQ_SUB);
-    gps_sub.connect("tcp://10.8.0.9:5563");
+    gps_sub.connect("tcp://10.8.0.8:5563");
     gps_sub.setsockopt(ZMQ_SUBSCRIBE, "GPS", 3);
 
     file.open("gps_delay.csv");
@@ -29,6 +29,7 @@ void gpsThread::run() {
         sensors::Gps gps;
         zmq::message_t msg;
         gps_sub.recv(&msg);
+
         //protobuf parsing
         gps.ParseFromArray(msg.data(), msg.size());
         latitude = gps.latitude();
@@ -36,25 +37,24 @@ void gpsThread::run() {
         hdop=gps.horizontaldilutionofprecision();
         cout<<gps.latitude()<<" "<<gps.longitude()<<endl;
 
+        //전송 delay 측정
         struct timeval tv;
         gettimeofday(&tv, NULL);
         double cur=1000000*tv.tv_sec + tv.tv_usec;
         file<<cur-gps.timestamp()<<",us\n";
 
-        //printf("lat=%lf long=%lf\n", Convert_to_dd(latitude), Convert_to_dd(longitude));
+        //signal 전송
         emit send_ll(
             QString::number(Convert_to_dd(latitude), 'g', 9),
             QString::number(Convert_to_dd(longitude), 'g', 9),
             hdop
         );
-
     }
 }
 
 void gpsThread::stop(){
     stop_flag = true;
     file.close();
-    //emit send_end();
 }
 
 double gpsThread::Convert_to_dd(double raw){

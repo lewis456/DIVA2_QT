@@ -34,26 +34,11 @@
 #include <pcl/console/parse.h>
 #include <pcl/filters/voxel_grid.h>
 
-#include "jsoncpp/json/json.h"
-
-#include "ouster/os1.h"
-#include "ouster/os1_packet.h"
-#include "ouster/os1_util.h"
-#include "ouster/viz.h"
-
 #include "Timestamp.h"
 #include <google/protobuf/text_format.h>
 #include "sensors.pb.h"
 #include <zmq.hpp>
 #include <fstream>
-
-#define os1_host  "os1-991904000944.local"
-#define os1_udp_dest   "10.5.5.1"
-
-
-namespace OS1 = ouster::OS1;
-namespace viz = ouster::viz;
-
 
 class lidarThread : public QThread
 {

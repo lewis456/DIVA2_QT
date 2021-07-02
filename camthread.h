@@ -22,17 +22,13 @@ class camThread : public QThread
     Q_OBJECT
 public:
     explicit camThread(QObject *parent = 0);
-    Timestamp ts;
 
-    cv::VideoCapture cap;
     cv::Mat frame;
     cv::Mat mat;
-    char buf[256];
 
     int rows, cols;
     vector<uchar> data;
 
-    vector<int> Compression_params;
     bool stop_flag = false;
 
     ofstream file;

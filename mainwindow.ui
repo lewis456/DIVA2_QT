@@ -551,6 +551,9 @@ border-radius: 5px;</string>
       <height>241</height>
      </rect>
     </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgba(255,255,255,80);</string>
+    </property>
    </widget>
    <widget class="QListWidget" name="Date_list">
     <property name="geometry">
@@ -560,6 +563,9 @@ border-radius: 5px;</string>
       <width>201</width>
       <height>101</height>
      </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgba(255,255,255,80);</string>
     </property>
    </widget>
    <widget class="QCustomPlot" name="plot" native="true">

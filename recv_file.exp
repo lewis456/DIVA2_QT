@@ -5,7 +5,7 @@
 
 set dir [lindex $argv 0]
 
-spawn rsync -avzhP cvlab2@165.246.39.124:~/$dir .
+spawn rsync -avzhP cvlab2@165.246.39.124:~/DIVA2/diva2-server/DIVA2data/$dir .
 expect -re "password:"
 send "cvlab525\r"
 

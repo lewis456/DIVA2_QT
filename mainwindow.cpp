@@ -1,30 +1,30 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-#include <mutex>
-
-bool wifi_use = true;
-
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
-    QPixmap bg("/home/yh/git/DIVA2_QT_pb/color.jpeg");
+    //배경
+    QPixmap bg("../color.jpeg");
     QPalette p(palette());
     p.setBrush(QPalette::Background,bg);
-
     setAutoFillBackground(true);
     setPalette(p);
     ui->setupUi(this);
     this->setFixedSize(1776,900);
+
+    //저장공간 표시
     storage=QStorageInfo::root();
     ui->progressBar->setRange(0,100);
-//    ui->progressBar->setValue(50);
     timer=new QTimer(this);
     timer->setInterval(1000);
-    DataTimer=new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(setUsage()));
-    //QThread::msleep(1000);
+
+    //IMU 그래프 타이머
+    DataTimer=new QTimer(this);
+    GraphInit(ui->plot);
+
     qRegisterMetaType<pcl::PointCloud<pcl::PointXYZ>::Ptr >("pcl::PointCloud<pcl::PointXYZ>::Ptr");
     gpscnt = 0;
     connect(ui->actionInitializing, SIGNAL(triggered()), this, SLOT(Initializing_for_Live()));  
@@ -34,12 +34,13 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(ui->actionAlgorithm_Test, SIGNAL(triggered()), this, SLOT(start_algorithm()));
     connect(ui->actionSend_Data, SIGNAL(triggered()), this, SLOT(send_data()));
+    
+    //로고
     ui->logo->setAlignment(Qt::AlignCenter);
     QPixmap temp_jpeg;
-   temp_jpeg.load("../resource/diva_logo.jpg");
-   ui->logo->setPixmap(temp_jpeg.scaled(ui->logo->width(), ui->logo->height()));
+    temp_jpeg.load("../resource/diva_logo.jpg");
+    ui->logo->setPixmap(temp_jpeg.scaled(ui->logo->width(), ui->logo->height()));
     ui->logo->show();
-    GraphInit(ui->plot);
 }
 
 MainWindow::~MainWindow()
@@ -49,71 +50,61 @@ MainWindow::~MainWindow()
 }
 
 void MainWindow::on_gps_cb_stateChanged(int arg1){
-    if(arg1 > 0){
+    if(arg1 > 0) 
         use_gps = true;
-    }else{
+    else 
         use_gps = false;
-    }
 }
 
 void MainWindow::on_cam_cb_stateChanged(int arg1){
-    if(arg1 > 0){
+    if(arg1 > 0)
         use_cam = true;
-    }else{
+    else
         use_cam = false;
-    }
 }
 
 void MainWindow::on_lidar_cb_stateChanged(int arg1){
-    if(arg1 > 0){
+    if(arg1 > 0)
         use_lidar = true;
-    }else{
+    else
         use_lidar = false;
-    }
-
 }
 
 void MainWindow::on_imu_cb_stateChanged(int arg1){
-    if(arg1 > 0){
+    if(arg1 > 0)
         use_imu = true;
-    }else{
+    else
         use_imu = false;
-    }
-
 }
 
 void MainWindow::on_can_cb_stateChanged(int arg1){
-    if(arg1 > 0){
+    if(arg1 > 0)
         use_can = true;
-    }else{
+    else
         use_can = false;
-    }
-
 }
 
 
 void MainWindow::display_gps_info(QString latitude, QString longitude,double hdop){
-    //mpage->setView(mview);
-    QString latlong="lat : "+latitude+" lng : "+longitude;
+    QString latlong = "lat : " + latitude + " lng : " + longitude;
 
+    //카카오맵, 위도경도 도로명주소 QLabel
     if(latitude != "0" && longitude != "0"){
-        //gpsWidget2->setText(QString::fromLocal8Bit(latlong.c_str()));
         gpsWidget2->setText(latlong);
-        if(wifi_use){
             mpage->runJavaScript(QString("addMarker(%1, %2);").arg(latitude).arg(longitude));  
-                    if(gpscnt==0 || gpscnt%10 == 0){
+                if(gpscnt==0 || gpscnt%10 == 0){
                     mpage->runJavaScript(QString("getAddr();"),[this](const QVariant &v){
                         addr = v.toString();
                         gpsWidget->setText(addr);
                     });
-            } 
-        }
+                }
         gpsWidget2->show();
         gpsWidget->show();
         mview->show();
     }
     mview->show();
 
+    //수신율
     if(gpscnt%10==0){
         if(hdop<=1){
             ui->signal1->setStyleSheet("QLabel { background-color: rgb(115, 210, 22); "
@@ -147,12 +138,9 @@ void MainWindow::display_gps_info(QString latitude, QString longitude,double hdo
 }
 
 void MainWindow::gps_view_initialize(){
-    if(wifi_use){
         mpage->runJavaScript(QString("resetMarker();"));
         mpage->runJavaScript(QString("initMap();"));
         mview->show();
-    } 
-    //QCoreApplication::processEvents();
 }
 
 void MainWindow::display_cam(QImage image){
@@ -164,10 +152,6 @@ void MainWindow::display_cam(QImage image){
 
 void MainWindow::display_handle_data(QString str){
     str.prepend("Steering Wheel Degree\n");
-    //str.append("\n");
-    // str.append("\nHandle acceleration : ");
-    // str.append(str2);
-    //str.sprintf("%3d", str);
     ui->label_5->setText(str);
     ui->label_5->show();
     QCoreApplication::processEvents();
@@ -179,17 +163,15 @@ void MainWindow::speedChanged(float value){
 }
 
 void MainWindow::display_gear(int gear){
-    if(gear == 1){//P
+    if(gear == 1)//P
         redRectLabel->move(1306, 665);
-    }else if(gear == 2){//R
+    else if(gear == 2)//R
         redRectLabel->move(1356, 665);
-    }else if(gear == 3){//N
+    else if(gear == 3)//N
         redRectLabel->move(1406, 665);
-    }else if(gear == 4){//D
+    else if(gear == 4)//D
         redRectLabel->move(1456, 665);
-    }else{
-        return;
-    }
+    else return;
     QCoreApplication::processEvents();
 }
 
@@ -200,14 +182,15 @@ void MainWindow::display_turn_indicator(int turn){
     }else if(turn == 2){//right
         rArrowLabel->show();
         lArrowLabel->hide();
-    }else if(turn == 0){//none
-        lArrowLabel->hide();
-        rArrowLabel->hide();
-    }
-    else if(turn==3){
+    }else if(turn == 3){//both
         lArrowLabel->show();
         rArrowLabel->show();
     }
+    else if(turn==0){ //none
+        lArrowLabel->hide();
+        rArrowLabel->hide();
+    }
+    else return;
     QCoreApplication::processEvents();
 }
 
@@ -253,7 +236,6 @@ void MainWindow::Make(){
  
     //kakao map
     mview->setGeometry(650, 30, 580, 810);
-    //mview->setAttribute(Qt::WA_TranslucentBackground);
     mview->setStyleSheet("background:transparent;");
     mpage->setUrl(QUrl("http://localhost:8080/map_real.html"));
     mpage->setBackgroundColor(Qt::transparent);
@@ -303,9 +285,9 @@ void MainWindow::Make(){
     ui->signal1->raise();
     ui->signal2->raise();
     ui->signal3->raise();
+
     //storage
     setUsage();
-
 }
 
 
@@ -318,9 +300,8 @@ void MainWindow::Initializing_for_Live(){
         ct = new camThread(this);
     if(use_lidar)
         lt = new lidarThread(this);
-    if(use_imu){
+    if(use_imu)
         it = new imuThread(this);
-    }
     if(use_can)
        cant = new canThread();
 
@@ -366,7 +347,6 @@ void MainWindow::Initializing_for_Live(){
 }
 
 void MainWindow::start_graph_timer(){
-    cout<<"timer start"<<endl;
     ui->plot->graph(0)->data()->clear();
     ui->plot->graph(1)->data()->clear();
     ui->plot->replot();
@@ -408,7 +388,7 @@ void MainWindow::GraphInit(QCustomPlot *customPlot)
     customPlot->legend->setBrush(QBrush(QColor(255,255,255,100)));
     customPlot->axisRect()->setBackground(QBrush(QColor(255,255,255,80)));
     customPlot->axisRect()->insetLayout()->setInsetAlignment(0,Qt::AlignLeft|Qt::AlignTop);
-      // make left and bottom axes transfer their ranges to right and top axes:
+    
     connect(customPlot->xAxis, SIGNAL(rangeChanged(QCPRange)), customPlot->xAxis2, SLOT(setRange(QCPRange)));
     connect(customPlot->yAxis, SIGNAL(rangeChanged(QCPRange)), customPlot->yAxis2, SLOT(setRange(QCPRange)));
 }
@@ -418,10 +398,9 @@ void MainWindow::RealTimeDataSlot()
     static QTime timeStart = QTime::currentTime();
       // calculate two new data points:
     double key = timeStart.msecsTo(QTime::currentTime())/1000.0; // time elapsed since start of demo, in seconds
-    //double key=timeStart.msecsSinceStartOfDay()/1000.0;
-
+    
     static double lastPointKey = 0;
-      if (key-lastPointKey > 0.1) // at most add point every 2 ms
+      if (key-lastPointKey > 0.1) // at most add point every 10 ms
       {
         // add data to lines:
         ui->plot->graph(0)->addData(key, (double)pitch);
@@ -467,15 +446,12 @@ struct MainWindow::CurrentLog
     QString d;
 };
 
-//id MainWindow::get_log_token(){    cout<<"log_displayed"<<endl;}
-
 void MainWindow::get_log_token(){
     ui->Date_list->clear();
     this_is_get_log = true;
     this->log_from_db = new QSqlQuery(this->database);
     this->log_from_db->exec("SELECT * FROM LOG;");
     MainWindow::CurrentLog current_log;
-    //this->log_from_db->first();
     
     while(1){
         if(this->log_from_db->next()){
@@ -530,7 +506,7 @@ void MainWindow::on_pushButton_clicked(){
       //해당 날짜 데이터 다운받는 expect script실행
     //   string command="expect -f ../recv_file.exp " ;
     //   command.append(selected_date.toStdString());
-    //   int ret=system(command.c_str());
+    //   system(command.c_str());
        
       ui->pushButton->setText("Play");
    }else{
@@ -598,12 +574,12 @@ void MainWindow::Setting_Frames(QString Text){
 void MainWindow::Display_Frame_Datas(QString Text){
     //저장된 폴더 경로
     //build/YYYYMMDD/
-    QString cur_dir="";
+    QString cur_dir="/home/yh/git/DIVA2_QT_pb/DIVA2_DATA/";
     cur_dir.append(selected_date);
     
-    QString pcd_dir=cur_dir+"/LIDAR/";
+    QString pcd_dir=cur_dir+"/LiDAR/PCD/";
 
-    QString cam_dir=cur_dir + "/CAM/";
+    QString cam_dir=cur_dir + "/CAM/JPG/";
     QString idx_file_format;
     QString idx_frame_data_token;
 
@@ -751,7 +727,6 @@ void MainWindow::setUsage(){
     ui->usage->setText(s_free);
     used=total-free;
     percent=static_cast<int>((used/total)*100);
-    //ui->progressBar->setRange(0,100);
     ui->progressBar->setValue(percent);
 }
 
@@ -795,5 +770,5 @@ void MainWindow::send_data(){
 }
 
 void MainWindow::start_algorithm(){
-    //system("알고리즘 실행파일")
+    system("~/algo/diva2/GroundStation/AlgorithmTesting_ka/build/diva_algorithm");
 }

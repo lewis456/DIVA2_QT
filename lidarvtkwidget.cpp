@@ -12,13 +12,14 @@ void lidarVTKWidget::initialVtkWidget(){
     viewer->setPointCloudRenderingProperties (pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 1, "cloud");
     viewer->addCoordinateSystem(1.0, "cloud");
     viewer->setBackgroundColor(0.05, 0.05, 0.05, 0);
-    viewer->setCameraPosition(0,0,70,0,1,0,0,0,0,0);
+
+    //카메라 방향 설정
+    viewer->setCameraPosition(40,0,40,0,0,0,0,0,1);
     this->show();
 }
 
 void lidarVTKWidget::display_lidar(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud){
     viewer->updatePointCloud(cloud, "cloud");
-    //viewer->resetCamera();
     this->update();
     while (!viewer->wasStopped ()) {
        viewer->spinOnce ();
