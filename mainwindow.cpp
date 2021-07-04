@@ -574,8 +574,8 @@ void MainWindow::Setting_Frames(QString Text){
 void MainWindow::Display_Frame_Datas(QString Text){
     //저장된 폴더 경로
     //build/YYYYMMDD/
-    QString cur_dir="/home/yh/git/DIVA2_QT_pb/DIVA2_DATA/";
-    cur_dir.append(selected_date);
+    QString cur_dir=selected_date;
+    //cur_dir.append(selected_date);
     
     QString pcd_dir=cur_dir+"/LiDAR/PCD/";
 
